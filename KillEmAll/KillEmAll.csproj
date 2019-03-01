@@ -49,7 +49,11 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Extensions\SoldierCommandExtension.cs" />
+    <Compile Include="KillEmAllSquadLogic - Copy.cs" />
     <Compile Include="KillEmAllSquadLogic.cs" />
+    <Compile Include="Movement\ISoldierMovement.cs" />
+    <Compile Include="Movement\SoldierMovement.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>

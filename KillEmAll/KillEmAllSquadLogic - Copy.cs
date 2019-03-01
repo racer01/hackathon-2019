@@ -8,9 +8,9 @@ using KillEmAll.Extensions;
 namespace KillEmAll
 {
     [Export(typeof(ISquadLogic))]
-    [ExportMetadata("SquadName", "KillEmwut2L")]
+    [ExportMetadata("SquadName", "copy")]
     [ExportMetadata("SquadImageResource", "KillEmAll.Resources.Face.png")]
-    public class KillEmAllSquadLogic : ISquadLogic
+    public class KillEmAllSquadLogicCopy : ISquadLogic
     {
         private Soldier _chosenOne;
         private Random _randomGen;
@@ -30,13 +30,14 @@ namespace KillEmAll
             return state.MySquad.Select(s => {
                 var command = new SoldierCommandExtension() { Soldier = s };
 
-                if (_chosenOne == null)
-                {
+                //if (_chosenOne == null)
+                //{
                     command.MoveForward = true;
+                    command.RotateRight = true;
                     return command;
-                }
+                //}
 
-                return _soldierMovement.MoveToLocation(s, _chosenOne, ref command);
+                //return _soldierMovement.MoveToLocation(s, _chosenOne, ref command);
             });
         }
     }
