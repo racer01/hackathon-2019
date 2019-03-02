@@ -15,12 +15,12 @@ namespace KillEmAll
         private Soldier _chosenOne;
         private Random _randomGen;
 
-        private ISoldierMovement _soldierMovement;
+        //private ISoldierMovement _soldierMovement;
 
         public void Initialize(string squadId, GameOptions options)
         {
             _randomGen = new Random();
-            _soldierMovement = new SoldierMovement();
+            //_soldierMovement = new SoldierMovement();
         }
 
         public IEnumerable<SoldierCommand> Update(GameState state)
@@ -30,14 +30,10 @@ namespace KillEmAll
             return state.MySquad.Select(s => {
                 var command = new SoldierCommandExtension() { Soldier = s };
 
-                //if (_chosenOne == null)
-                //{
-                    command.MoveForward = true;
-                    command.RotateRight = true;
-                    return command;
-                //}
-
-                //return _soldierMovement.MoveToLocation(s, _chosenOne, ref command);
+                command.MoveForward = true;
+                command.RotateRight = true;
+                return command;
+                //return _soldierMovement.MoveToLocationLEGACY(s, _chosenOne, ref command);
             });
         }
     }

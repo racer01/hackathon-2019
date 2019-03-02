@@ -10,7 +10,9 @@ namespace KillEmAll
 {
     interface ISoldierMovement
     {
-        SoldierCommandExtension MoveToLocation(Soldier currentSoldier, Soldier targetPos, ref SoldierCommandExtension command);
+        SoldierCommandExtension MoveToLocationLEGACY(Soldier currentSoldier, Soldier targetSoldier, ref SoldierCommandExtension command);
+
+        SoldierCommandExtension MoveToTarget(Soldier currentSoldier, Soldier targetSoldier, ref SoldierCommandExtension command);
 
         SoldierCommandExtension TurnTowards(Soldier currentSoldier, Soldier targetSoldier, ref SoldierCommandExtension command);
     }

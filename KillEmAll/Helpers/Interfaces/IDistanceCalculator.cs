@@ -5,9 +5,10 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace KillEmAll.Extensions
+namespace KillEmAll.Helpers.Interfaces
 {
-    public class SoldierCommandExtension : SoldierCommand
+    public interface IDistanceCalculator
     {
+        float DistanceBetween(PointF point1, PointF point2);
     }
 }

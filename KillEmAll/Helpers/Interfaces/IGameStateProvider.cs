@@ -5,9 +5,12 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace KillEmAll.Extensions
+namespace KillEmAll.Helpers.Interfaces
 {
-    public class SoldierCommandExtension : SoldierCommand
+    public interface IGameStateProvider
     {
+        GameState Get();
+
+        void Set(GameState state);
     }
 }
