@@ -143,8 +143,6 @@ namespace KillEmAll.Utility
                     gScore[neighbor] = tentativeGSore;
 
                     var score = tentativeGSore + CalculateHeuristic(neighbor, new int[] { (int)target.X, (int)target.Y });
-                    if (score == 38)
-                        Console.WriteLine();
 
                     if (remapScore)
                     {
