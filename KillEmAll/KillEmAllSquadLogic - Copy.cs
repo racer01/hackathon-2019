@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.Linq;
 using System.ComponentModel.Composition;
 using System;
-using KillEmAll.Extensions;
 
 namespace KillEmAll
 {
@@ -23,13 +22,13 @@ namespace KillEmAll
             //_soldierMovement = new SoldierMovement();
         }
 
-        public IEnumerable<SoldierCommand> Update(GameState state)
+        public IEnumerable<Hackathon.Public.SoldierCommand> Update(GameState state)
         {
             _chosenOne = state.VisibleEnemies.FirstOrDefault();
 
             return state.MySquad.Select(s =>
             {
-                var command = new SoldierCommandExtension() { Soldier = s };
+                var command = new SoldierCommand() { Soldier = s };
 
                 //command.MoveForward = true;
                 //command.RotateRight = true;

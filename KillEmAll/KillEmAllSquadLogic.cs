@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.Linq;
 using System.ComponentModel.Composition;
 using System;
-using KillEmAll.Extensions;
 using KillEmAll.Helpers.Interfaces;
 using KillEmAll.Helpers;
 using KillEmAll.Utility.Interfaces;
@@ -38,10 +37,10 @@ namespace KillEmAll
             _stateProvider = new GameStateProvider();
             _wallMapping = new WallMapping(options.MapSize.Width, options.MapSize.Height);
             _targetFinder = new TargetFinder(_stateProvider, _wallMapping, _pointUtility);
-            _pathFinding = new PathFinding(_wallMapping, options.MapSize.Width, options.MapSize.Height);
+            _pathFinding = new PathFinding(_wallMapping);
         }
 
-        public IEnumerable<SoldierCommand> Update(GameState state)
+        public IEnumerable<Hackathon.Public.SoldierCommand> Update(GameState state)
         {
             _stopWatch.Start();
             _stateProvider.Set(state);
@@ -50,7 +49,7 @@ namespace KillEmAll
             _wallMapping.StoreVisibleArea(state.VisibleArea);
 
             var commands = state.MySquad.Select(s => {
-                var command = new SoldierCommandExtension() { Soldier = s };
+                var command = new SoldierCommand() { Soldier = s };
 
                 GameObject target = state.VisibleTreasures.FirstOrDefault();
 
@@ -121,7 +120,7 @@ namespace KillEmAll
             return commands;
         }
 
-        private SoldierCommandExtension Explore(Soldier s, SoldierCommandExtension command)
+        private SoldierCommand Explore(Soldier s, SoldierCommand command)
         {
             if (_wallMapping.ReachableUnknowns.Count == 0)
                 return command;

@@ -52,8 +52,6 @@
     <Compile Include="Enums\Axis.cs" />
     <Compile Include="Enums\DiagonalCheckType.cs" />
     <Compile Include="Enums\RelativePosition.cs" />
-    <Compile Include="Extensions\SoldierCommandExtension.cs" />
-    <Compile Include="Extensions\SoldierExtension.cs" />
     <Compile Include="Helpers\DistanceCalculator.cs" />
     <Compile Include="Helpers\GameStateProvider.cs" />
     <Compile Include="Helpers\Interfaces\IDistanceCalculator.cs" />
@@ -82,6 +80,8 @@
   <ItemGroup>
     <EmbeddedResource Include="Resources\Face.png" />
   </ItemGroup>
-  <ItemGroup />
+  <ItemGroup>
+    <Folder Include="Extensions\" />
+  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>
