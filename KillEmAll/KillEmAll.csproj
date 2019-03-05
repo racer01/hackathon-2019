@@ -50,6 +50,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Enums\Axis.cs" />
+    <Compile Include="Enums\DiagonalCheckType.cs" />
     <Compile Include="Enums\RelativePosition.cs" />
     <Compile Include="Extensions\SoldierCommandExtension.cs" />
     <Compile Include="Extensions\SoldierExtension.cs" />
@@ -66,14 +67,16 @@
     <Compile Include="Movement\ISoldierMovement.cs" />
     <Compile Include="Movement\SoldierMovement.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Utility\Interfaces\IPathFinding.cs" />
     <Compile Include="Utility\Interfaces\IPointUtility.cs" />
     <Compile Include="Utility\Interfaces\IUtilityCache.cs" />
+    <Compile Include="Utility\PathFinding.cs" />
     <Compile Include="Utility\PointUtility.cs" />
     <Compile Include="Utility\UtilityCache.cs" />
   </ItemGroup>
   <ItemGroup>
     <PackageReference Include="Hackathon.Public">
-      <Version>1.0.2</Version>
+      <Version>1.0.3</Version>
     </PackageReference>
   </ItemGroup>
   <ItemGroup>

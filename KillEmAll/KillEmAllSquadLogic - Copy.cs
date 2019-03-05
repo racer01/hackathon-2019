@@ -27,11 +27,12 @@ namespace KillEmAll
         {
             _chosenOne = state.VisibleEnemies.FirstOrDefault();
 
-            return state.MySquad.Select(s => {
+            return state.MySquad.Select(s =>
+            {
                 var command = new SoldierCommandExtension() { Soldier = s };
 
-                command.MoveForward = true;
-                command.RotateRight = true;
+                //command.MoveForward = true;
+                //command.RotateRight = true;
                 return command;
                 //return _soldierMovement.MoveToLocationLEGACY(s, _chosenOne, ref command);
             });

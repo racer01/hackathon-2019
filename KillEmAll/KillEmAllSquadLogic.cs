@@ -8,16 +8,17 @@ using KillEmAll.Helpers.Interfaces;
 using KillEmAll.Helpers;
 using KillEmAll.Utility.Interfaces;
 using KillEmAll.Utility;
+using System.Diagnostics;
 
 namespace KillEmAll
 {
     [Export(typeof(ISquadLogic))]
-    [ExportMetadata("SquadName", "KillEmwut2L")]
+    [ExportMetadata("SquadName", "MLSlayer")]
     [ExportMetadata("SquadImageResource", "KillEmAll.Resources.Face.png")]
     public class KillEmAllSquadLogic : ISquadLogic
     {
-        private Soldier _chosenOne;
         private Random _randomGen;
+        private Stopwatch _stopWatch;
 
         private ISoldierMovement _soldierMovement;
         private ITargetFinder _targetFinder;
@@ -25,9 +26,11 @@ namespace KillEmAll
         private IWallMapping _wallMapping;
         private IUtilityCache _utilityCache;
         private IPointUtility _pointUtility;
+        private IPathFinding _pathFinding;
 
         public void Initialize(string squadId, GameOptions options)
         {
+            _stopWatch = new Stopwatch();
             _randomGen = new Random();
             _utilityCache = new UtilityCache();
             _pointUtility = new PointUtility(_utilityCache);
@@ -35,45 +38,127 @@ namespace KillEmAll
             _stateProvider = new GameStateProvider();
             _wallMapping = new WallMapping(options.MapSize.Width, options.MapSize.Height);
             _targetFinder = new TargetFinder(_stateProvider, _wallMapping, _pointUtility);
+            _pathFinding = new PathFinding(_wallMapping, options.MapSize.Width, options.MapSize.Height);
         }
 
-        //TODO: 
-        // 1. set the NEW gamestate on each update in the provider
-        // 2. empty and store all visible walls
-        // 3. empty cache on each update
-        // 
         public IEnumerable<SoldierCommand> Update(GameState state)
         {
-            _utilityCache.Clear();
-            // update gamestate
+            _stopWatch.Start();
             _stateProvider.Set(state);
 
-            // update walls
-            //rip performance :(
-            for (var i = 0; i < state.VisibleArea.GetLength(0); i++)
-            {
-                for (var j = 0; j < state.VisibleArea.GetLength(1); j++)
-                {
-                    var current = state.VisibleArea[i, j];
-                    if (current == MapCell.Wall)
-                        _wallMapping.Store(i, j);
-                }
-            }
+            // update our kown map
+            _wallMapping.StoreVisibleArea(state.VisibleArea);
 
-            return state.MySquad.Select(s => {
+            var commands = state.MySquad.Select(s => {
                 var command = new SoldierCommandExtension() { Soldier = s };
 
-                var target = _targetFinder.GetClosestEnemy(s);
+                GameObject target = state.VisibleTreasures.FirstOrDefault();
 
                 if (target == null)
-                {
-                    //Console.WriteLine($"||||||||||||||| CANT SEE ENEMIES (Game Time: {state.TotalGameTime}) ||||||||||||||");
-                    command.MoveForward = true;
-                    return command;
-                }
+                    target = state.VisibleAmmoBonuses.FirstOrDefault();
 
-                return _soldierMovement.MoveToLocationLEGACY(s, target, ref command);
+                if (target == null)
+                    target = state.VisibleHealthBonuses.FirstOrDefault();
+
+                if (target == null)
+                    return command;
+
+                var pathToTreasure = _pathFinding.Asd(s.Position, target.Position);
+
+                if (pathToTreasure.Count == 0)
+                    return command;
+
+                pathToTreasure[0] = target.Position;
+
+                var nextPoint = pathToTreasure.Count > 1 ? pathToTreasure.ElementAt(pathToTreasure.Count - 2) : pathToTreasure.First();
+
+                return _soldierMovement.MoveToLocation(s, nextPoint, TargetType.OBJECT, ref command);
+
+                ////var target = _targetFinder.GetClosestVisibleEnemy(s);
+                ////if (target != null)
+                ////    return _soldierMovement.MoveToLocation(s, target, TargetType.ENEMY, ref command);
+
+
+                //var pathToTake = new List<PointF>();
+                //var target = _targetFinder.GetClosestEnemyOfAll(s);
+                //if (target != null)
+                //{
+                //    pathToTake = _pathFinding.Asd(s.Position, target.Position);
+                //    if (pathToTake.Count != 0)
+                //    {
+                //        pathToTake[0] = target.Position;
+                //        var nextTarget = pathToTake.Count > 1 ? pathToTake.ElementAt(pathToTake.Count - 2) : pathToTake.First();
+                //        return _soldierMovement.MoveToLocation(s, nextTarget, TargetType.OBJECT, ref command);
+                //    }
+                //}
+
+                //if (_wallMapping.ReachableUnknown == null)
+                //    return command;
+
+                //var unknownTarget = new PointF(_wallMapping.ReachableUnknown[0], _wallMapping.ReachableUnknown[1]);
+                //pathToTake = _pathFinding.Asd(s.Position, unknownTarget);
+                //if (pathToTake.Count == 0)
+                //    return command;
+
+                //pathToTake[0] = unknownTarget;
+
+                //var nextPoint = pathToTake.Count > 1 ? pathToTake.ElementAt(pathToTake.Count - 2) : pathToTake.First();
+
+                //if (((int)s.Position.X) == nextPoint.X && ((int)s.Position.Y) == nextPoint.Y)
+                //{
+                //    command.RotateRight = true;
+                //    return command;
+                //}
+
+                //return _soldierMovement.MoveToLocation(s, nextPoint, TargetType.OBJECT, ref command);
             });
+
+            _stopWatch.Stop();
+            Console.Clear();
+            Console.WriteLine($"Update complated in: {_stopWatch.Elapsed}");
+            _stopWatch.Reset();
+
+            return commands;
+        }
+
+        private SoldierCommandExtension Explore(Soldier s, SoldierCommandExtension command)
+        {
+            if (_wallMapping.ReachableUnknowns.Count == 0)
+                return command;
+
+            //HACK
+            _wallMapping.ReachableUnknowns.RemoveAll(ru =>
+            {
+                var cellType = _wallMapping.GetCellType(ru[0], ru[1]);
+                if (cellType != MapCell.Unknown)
+                    return true;
+                return false;
+            });
+            //END HACK
+
+            var u = _wallMapping.ReachableUnknowns.First();
+
+            var unknownTarget = new PointF(u[0], u[1]);
+            var pathToTake = _pathFinding.Asd(s.Position, unknownTarget);
+            if (pathToTake.Count == 0)
+            {
+                _wallMapping.ReachableUnknowns.RemoveAll(r => r.SequenceEqual(new int[] { (int)unknownTarget.X, (int)unknownTarget.Y }));
+                return command;
+            }
+                
+
+            pathToTake[0] = unknownTarget;
+
+            var nextPoint = pathToTake.Count > 1 ? pathToTake.ElementAt(pathToTake.Count - 2) : pathToTake.First();
+
+            if (((int)s.Position.X) == (int)unknownTarget.X && ((int)s.Position.Y) == (int)unknownTarget.Y)
+            {
+
+                _wallMapping.ReachableUnknowns.RemoveAll(r => r.SequenceEqual(new int[] { (int)unknownTarget.X, (int)unknownTarget.Y }));
+                return command;
+            }
+
+            return _soldierMovement.MoveToLocation(s, nextPoint, TargetType.OBJECT, ref command);
         }
     }
 }

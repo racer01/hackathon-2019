@@ -16,7 +16,7 @@ namespace KillEmAll.Utility.Interfaces
         /// <param name="point1"></param>
         /// <param name="point2"></param>
         /// <returns></returns>
-        float DistanceBetween(PointF point1, PointF point2, bool useCache = true);
+        float DistanceBetween(PointF point1, PointF point2, bool useCache = false);
 
         /// <summary>
         /// Returns if the target point is in on a line between point 'start' and point 'end'.
@@ -25,7 +25,7 @@ namespace KillEmAll.Utility.Interfaces
         /// <param name="end"></param>
         /// <param name="target"></param>
         /// <returns></returns>
-        bool IsInBetween(PointF start, PointF end, PointF target, bool useCache = true);
+        bool IsInBetween(PointF start, PointF end, PointF target, bool useCache = false);
 
 
         /// <summary>
@@ -34,7 +34,7 @@ namespace KillEmAll.Utility.Interfaces
         /// <param name="currentPoint"></param>
         /// <param name="targetPoint"></param>
         /// <returns></returns>
-        double GetAngleBetween(PointF currentPoint, PointF targetPoint, bool useCache = true);
+        double GetAngleBetween(PointF currentPoint, PointF targetPoint, bool useCache = false);
 
         /// <summary>
         /// Returns point2's relative position compared to point1.

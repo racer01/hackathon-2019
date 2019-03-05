@@ -22,7 +22,7 @@ namespace KillEmAll.Utility
             _cache = cache;
         }
 
-        public float DistanceBetween(PointF point1, PointF point2, bool useCache = true)
+        public float DistanceBetween(PointF point1, PointF point2, bool useCache = false)
         {
             string key = null;
             if (useCache)
@@ -41,7 +41,7 @@ namespace KillEmAll.Utility
         }
 
         // target should be a wall
-        public bool IsInBetween(PointF start, PointF end, PointF target, bool useCache = true)
+        public bool IsInBetween(PointF start, PointF end, PointF target, bool useCache = false)
         {
             // because wall positions are always given as whole numbers, round down the soldiers position.
             // nope
@@ -249,7 +249,7 @@ namespace KillEmAll.Utility
             return (y2 - y1) / (x2 - x1);
         }
 
-        public double GetAngleBetween(PointF currentPoint, PointF targetPoint, bool useCache = true)
+        public double GetAngleBetween(PointF currentPoint, PointF targetPoint, bool useCache = false)
         {
             return Math.Atan2(targetPoint.Y - currentPoint.Y, targetPoint.X - currentPoint.X);
         }

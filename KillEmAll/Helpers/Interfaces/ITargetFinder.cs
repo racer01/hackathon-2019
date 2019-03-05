@@ -29,13 +29,15 @@ namespace KillEmAll.Helpers.Interfaces
         ///     This should help in prioritizing enemies that won't require much turning to reach (it's very slow to completely turn around).
         /// </param>
         /// <returns>Array of soldiers. Empty array if no soldiers are visible.</returns>
-        List<Soldier> GetVisibleEnemies(Soldier currentSoldier, float fov = 0f);
+        Soldier[] GetVisibleEnemies(Soldier currentSoldier, float fov = 0);
 
         /// <summary>
         /// Returns closest enemy to the current soldier.
         /// </summary>
         /// <param name="currentSoldier">Reference soldier.</param>
         /// <returns>Soldier object or null if no enemies are visible.</returns>
-        Soldier GetClosestEnemy(Soldier currentSoldier, float fov = 0f);
+        Soldier GetClosestVisibleEnemy(Soldier currentSoldier, float fov = 0f);
+
+        Soldier GetClosestEnemyOfAll(Soldier currentSoldier);
     }
 }

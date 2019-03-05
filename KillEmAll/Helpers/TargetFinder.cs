@@ -24,20 +24,31 @@ namespace KillEmAll.Helpers
             _pointUtility = pointUtility;
         }
 
-        //NOTE: its redundant to check with soldiers that are in the same box
-        public Soldier GetClosestEnemy(Soldier currentSoldier, float fov = 0)
+        public Soldier GetClosestVisibleEnemy(Soldier currentSoldier, float fov = 0)
         {
             var enemies = GetVisibleEnemies(currentSoldier);
 
-            if (enemies.Count == 0)
-                Console.WriteLine();
+            return GetClosest(currentSoldier, enemies);
+        }
 
+        public Soldier GetClosestEnemyOfAll(Soldier currentSoldier)
+        {
+            var enemies = _gameStateProvider.Get().VisibleEnemies;
+
+            return GetClosest(currentSoldier, enemies);
+        }
+
+        private Soldier GetClosest(Soldier currentSoldier, Soldier[] enemies)
+        {
             Soldier closestSoldier = null;
             float closestDistance = 999999999f;
-            for (var i = 0; i < enemies.Count; i++)
+            for (var i = 0; i < enemies.Length; i++)
             {
+                if (enemies[i] == null)
+                    break;
+
                 var distance = _pointUtility.DistanceBetween(currentSoldier.Position, enemies[i].Position);
-                 if (distance < closestDistance)
+                if (distance < closestDistance)
                 {
                     closestSoldier = enemies[i];
                     closestDistance = distance;
@@ -47,7 +58,7 @@ namespace KillEmAll.Helpers
         }
 
         // TODO: implement FOV
-        public List<Soldier> GetVisibleEnemies(Soldier currentSoldier, float fov = 0)
+        public Soldier[] GetVisibleEnemies(Soldier currentSoldier, float fov = 0)
         {
             var gameState = _gameStateProvider.Get();
 
@@ -56,7 +67,7 @@ namespace KillEmAll.Helpers
             var currentX = (int)currentSoldier.Position.X;
             var currentY = (int)currentSoldier.Position.Y;
 
-            var visibleEnemies = new List<Soldier>();
+            var visibleEnemies = new Soldier[gameState.MySquad.Length * (gameState.Squads.Length - 1)];
             PointF[] walls = null;
 
             // iterate through each visible enemy, checking if a wall breaks line of sight to our soldier
@@ -68,7 +79,7 @@ namespace KillEmAll.Helpers
                 walls = GetWallsBetweenPoints(currentSoldier.Position, target.Position);
                 if (walls == null)
                 {
-                    visibleEnemies.Add(target);
+                    visibleEnemies[i] = target;
                     continue;
                 }
 
@@ -88,7 +99,7 @@ namespace KillEmAll.Helpers
                 if (!isOutOfSight)
                 {
                     // if no walls are blocking the target it should be visible by the current soldier
-                    visibleEnemies.Add(target);
+                    visibleEnemies[i] = target;
                 }
             }
             return visibleEnemies;
