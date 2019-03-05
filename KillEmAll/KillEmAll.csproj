@@ -62,6 +62,8 @@
     <Compile Include="Helpers\WallMapping.cs" />
     <Compile Include="KillEmAllSquadLogic - Copy.cs" />
     <Compile Include="KillEmAllSquadLogic.cs" />
+    <Compile Include="momsspaghetti\MovementUtility.cs" />
+    <Compile Include="momsspaghetti\WallMapping.cs" />
     <Compile Include="Movement\ISoldierMovement.cs" />
     <Compile Include="Movement\SoldierMovement.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
