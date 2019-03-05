@@ -4,7 +4,6 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using Hackathon.Public;
-using KillEmAll.Extensions;
 using KillEmAll.Utility.Interfaces;
 
 namespace KillEmAll
@@ -30,14 +29,14 @@ namespace KillEmAll
             _pointUtility = pointUtility;
         }
 
-        public SoldierCommandExtension MoveToLocation(Soldier currentSoldier, PointF target, TargetType targetType, ref SoldierCommandExtension command)
+        public SoldierCommand MoveToLocation(Soldier currentSoldier, PointF target, TargetType targetType, ref SoldierCommand command)
         {
             return MoveToLocation(currentSoldier, new Soldier(null, null, target, 0, 0, 0, 0, 0, 0), targetType, ref command);
         }
 
         // the function does too many things (rotate, forward-backward movement, shooting)
         // if I separated these 3 things, then all the math (distance, desired rotation etc.) would have to be re-done.
-        public SoldierCommandExtension MoveToLocation(Soldier currentSoldier, Soldier targetSoldier, TargetType targetType, ref SoldierCommandExtension command)
+        public SoldierCommand MoveToLocation(Soldier currentSoldier, Soldier targetSoldier, TargetType targetType, ref SoldierCommand command)
         {
             var targetSpeed = targetSoldier.Speed;
             var targetDirection = targetSoldier.LookAtDirection;
@@ -96,7 +95,7 @@ namespace KillEmAll
             return command;
         }
 
-        public SoldierCommandExtension TurnTowards(Soldier currentSoldier, Soldier targetSoldier, ref SoldierCommandExtension command)
+        public SoldierCommand TurnTowards(Soldier currentSoldier, Soldier targetSoldier, ref SoldierCommand command)
         {
             var desiredAngle = _pointUtility.GetAngleBetween(currentSoldier.Position, targetSoldier.Position);
 

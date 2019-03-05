@@ -1,19 +1,13 @@
 ﻿using Hackathon.Public;
-using KillEmAll.Extensions;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace KillEmAll
 {
     interface ISoldierMovement
     {
-        SoldierCommandExtension MoveToLocation(Soldier currentSoldier, Soldier targetSoldier, TargetType targetType, ref SoldierCommandExtension command);
+        SoldierCommand MoveToLocation(Soldier currentSoldier, Soldier targetSoldier, TargetType targetType, ref SoldierCommand command);
 
-        SoldierCommandExtension MoveToLocation(Soldier currentSoldier, PointF target, TargetType targetType, ref SoldierCommandExtension command);
+        SoldierCommand MoveToLocation(Soldier currentSoldier, PointF target, TargetType targetType, ref SoldierCommand command);
 
-        SoldierCommandExtension TurnTowards(Soldier currentSoldier, Soldier targetSoldier, ref SoldierCommandExtension command);
+        SoldierCommand TurnTowards(Soldier currentSoldier, Soldier targetSoldier, ref SoldierCommand command);
     }
 }
