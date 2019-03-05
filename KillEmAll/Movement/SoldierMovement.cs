@@ -61,10 +61,6 @@ namespace KillEmAll
 
 
             command.MoveForward = targetType == TargetType.ENEMY;
-            //command.MoveForward = true;
-
-            //if (targetType == TargetType.OBJECT && distance <= 2 && currentSoldier.Speed != 0)
-            //    command.MoveForward = false;
 
             if (rotationDiff > ROTATION_ACCURACY)
                 command.RotateRight = true;

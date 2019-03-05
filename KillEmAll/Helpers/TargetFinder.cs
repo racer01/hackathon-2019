@@ -90,8 +90,6 @@ namespace KillEmAll.Helpers
 
                     if (_pointUtility.IsInBetween(currentSoldier.Position, target.Position, walls[j]))
                     {
-                        // a wall is in between our solder and it's target -> target is not visible by current soldier
-                        //Console.WriteLine($"||||||||| WALL IS BLOCKING TARGET (WALL({i}, {j}))|||||||||||");
                         isOutOfSight = true;
                         break;
                     }
@@ -107,7 +105,6 @@ namespace KillEmAll.Helpers
 
         private PointF[] GetWallsBetweenPoints(PointF soldier, PointF target)
         {
-            // REFACTOR: unnecessarily rounds down the same number multiple times
             var otherPoint = new PointF((int)target.X, (int)target.Y);
             var referencePoint = new PointF((int)soldier.X, (int)soldier.Y);
 

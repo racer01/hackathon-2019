@@ -13,57 +13,24 @@ namespace KillEmAll.Utility
 
     public class PointUtility : IPointUtility
     {
-        private IUtilityCache _cache;
         private const int WALL_SIZE = 1;
         private const int ROUNDING_PRECISION = 1;
 
-        public PointUtility(IUtilityCache cache)
+        public PointUtility()
         {
-            _cache = cache;
         }
 
         public float DistanceBetween(PointF point1, PointF point2, bool useCache = false)
         {
-            string key = null;
-            if (useCache)
-            {
-                key = _cache.GenerateKey(GetType(), nameof(DistanceBetween), point1.X, point1.Y, point2.X, point2.Y);
-                if (_cache.TryGet(key, out float value))
-                    return value;
-            }
-
             var result = (point1.X - point2.X) * (point1.X - point2.X) + (point1.Y - point2.Y) * (point1.Y - point2.Y);
-
-            if (useCache)
-                _cache.Add(key, result);
-
             return result;
         }
 
         // target should be a wall
         public bool IsInBetween(PointF start, PointF end, PointF target, bool useCache = false)
         {
-            // because wall positions are always given as whole numbers, round down the soldiers position.
-            // nope
             start = new PointF((float)Math.Round(start.X, ROUNDING_PRECISION), (float)Math.Round(start.Y, ROUNDING_PRECISION));
             end = new PointF((float)Math.Round(end.X, ROUNDING_PRECISION), (float)Math.Round(end.Y, ROUNDING_PRECISION));
-
-            //DEBUG
-            if (target.X == 12 && target.Y == 12)
-                Console.WriteLine();
-
-            string key = null;
-            if (useCache)
-            {
-                // FLOOR THE KEYS IF WE ARE CHECKING FOR WALLS
-                key = _cache.GenerateKey(GetType(), nameof(IsInBetween), start.X, start.Y, end.X, end.Y, target.X, target.Y);
-                if (_cache.TryGet(key, out bool value))
-                {
-                    if (value)
-                        Console.WriteLine();
-                    return value;
-                }
-            }
 
             var soldierChangeInX = end.X - start.X;
             var soldierChangeInY = end.Y - start.Y;
@@ -207,9 +174,6 @@ namespace KillEmAll.Utility
                     betweenOnYAxis = true;
             }
             var result = betweenOnYAxis && betweenOnXAxis;
-
-            if (useCache)
-                _cache.Add(key, result);
 
             return result;
         }

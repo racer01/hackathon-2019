@@ -133,20 +133,6 @@ namespace KillEmAll.Helpers
                     {
                         Store(i, j, current);
 
-                        //if (current == MapCell.Empty)
-                        //{
-                        //    var unknownNeighbors = GetNeighbourCells(new int[] { i, j }, searchType: MapCell.Unknown, areaToSeach: visibleArea, includeUnknows: true);
-
-                        //    if (unknownNeighbors != null && unknownNeighbors.Count != 0)
-                        //    {
-                        //        for (var u = 0; u < unknownNeighbors.Count; u++)
-                        //        {
-                        //            var point = new int[] { unknownNeighbors[u].X, unknownNeighbors[u].Y };
-                        //            ReachableUnknowns.Add(point);
-                        //        }
-                        //    }
-                                
-                        //}
                         jumpCount++;
                     }
                     else

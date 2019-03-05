@@ -11,20 +11,13 @@ namespace KillEmAll
     [ExportMetadata("SquadImageResource", "KillEmAll.Resources.Face.png")]
     public class KillEmAllSquadLogicCopy : ISquadLogic
     {
-        private Soldier _chosenOne;
-        private Random _randomGen;
-
-        //private ISoldierMovement _soldierMovement;
-
         public void Initialize(string squadId, GameOptions options)
         {
-            _randomGen = new Random();
-            //_soldierMovement = new SoldierMovement();
         }
 
-        public IEnumerable<Hackathon.Public.SoldierCommand> Update(GameState state)
+        public IEnumerable<SoldierCommand> Update(GameState state)
         {
-            _chosenOne = state.VisibleEnemies.FirstOrDefault();
+            var chosenOne = state.VisibleEnemies.FirstOrDefault();
 
             return state.MySquad.Select(s =>
             {
@@ -33,7 +26,6 @@ namespace KillEmAll
                 //command.MoveForward = true;
                 //command.RotateRight = true;
                 return command;
-                //return _soldierMovement.MoveToLocationLEGACY(s, _chosenOne, ref command);
             });
         }
     }
