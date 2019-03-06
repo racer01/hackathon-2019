@@ -22,30 +22,28 @@ namespace KillEmAll.Helpers
         public Soldier GetClosestVisibleEnemy(Soldier currentSoldier, float fov = 0)
         {
             var enemies = GetVisibleEnemies(currentSoldier);
-
-            return GetClosest(currentSoldier, enemies);
+            return GetClosestEnemy(currentSoldier, enemies);
         }
 
         public Soldier GetClosestEnemyOfAll(Soldier currentSoldier)
         {
             var enemies = _gameStateProvider.Get().VisibleEnemies;
-
-            return GetClosest(currentSoldier, enemies);
+            return GetClosestEnemy(currentSoldier, enemies);
         }
 
-        private Soldier GetClosest(Soldier currentSoldier, Soldier[] enemies)
+        public Soldier GetClosestEnemy(Soldier currentSoldier, Soldier[] enemies)
         {
             Soldier closestSoldier = null;
-            double closestDistance = 999999999;
-            for (var i = 0; i < enemies.Length; i++)
+            var closestDistance = double.MaxValue;
+            foreach (var enemy in enemies)
             {
-                if (enemies[i] == null)
+                if (enemy == null)
                     break;
 
-                var distance = _movementUtility.DistanceBetween(currentSoldier.Position, enemies[i].Position);
+                var distance = _movementUtility.DistanceBetween(currentSoldier.Position, enemy.Position);
                 if (distance < closestDistance)
                 {
-                    closestSoldier = enemies[i];
+                    closestSoldier = enemy;
                     closestDistance = distance;
                 }
             }
@@ -55,19 +53,12 @@ namespace KillEmAll.Helpers
         public Soldier[] GetVisibleEnemies(Soldier currentSoldier, float fov = 0)
         {
             var gameState = _gameStateProvider.Get();
-
-            var allVisibleEnemies = gameState.VisibleEnemies;
-
-            var currentX = (int)currentSoldier.Position.X;
-            var currentY = (int)currentSoldier.Position.Y;
-
             var visibleEnemies = new Soldier[gameState.MySquad.Length * (gameState.Squads.Length - 1)];
-            List<PointF> walls = null;
 
             for (var i = 0; i < gameState.VisibleEnemies.Length; i++)
             {
                 var target = gameState.VisibleEnemies[i];
-                walls = _wallMapping.GetCrossedWalls(currentSoldier.Position, target.Position);
+                var walls = _wallMapping.GetCrossedWalls(currentSoldier.Position, target.Position);
 
                 if (walls != null && walls.Count > 0)
                     continue;
@@ -79,7 +70,20 @@ namespace KillEmAll.Helpers
 
         public Treasure[] GetVisibleTreasures(Soldier currentSoldier, float fov = 0)
         {
-            throw new NotImplementedException();
+            var gameState = _gameStateProvider.Get();
+            var visibleTreasures = new Treasure[gameState.MySquad.Length * (gameState.Squads.Length - 1)];
+
+            for (var i = 0; i < gameState.VisibleTreasures.Length; i++)
+            {
+                var target = gameState.VisibleTreasures[i];
+                var walls = _wallMapping.GetCrossedWalls(currentSoldier.Position, target.Position);
+
+                if (walls != null && walls.Count > 0)
+                    continue;
+
+                visibleTreasures[i] = target;
+            }
+            return visibleTreasures;
         }
     }
 }
