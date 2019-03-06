@@ -35,77 +35,24 @@ namespace KillEmAll
         // if I separated these 3 things, then all the math (distance, desired rotation etc.) would have to be re-done.
         public SoldierCommand MoveToLocation(Soldier currentSoldier, Soldier targetSoldier, TargetType targetType, ref SoldierCommand command)
         {
-            var targetSpeed = targetSoldier.Speed;
-            var targetDirection = targetSoldier.LookAtDirection;
-
             var targetAngle = _movementUtility.GetTargetAngle(currentSoldier, targetSoldier);
-            //var targetAngle = Math.Atan2(currentSoldier.Position.Y - targetSoldier.Position.Y, currentSoldier.Position.X - targetSoldier.Position.X);
-
-
-            var targetAngleNorm = NormaliseRadian(targetAngle);
-            var normLookatDirection = NormaliseRadian(currentSoldier.LookAtDirection);
-            //var rotationDiff = normalisedLookatDirection - normTargetAngle;
-            //var amountToRotate = Math.Abs(rotationDiff) + Math.Abs(normTargetAngle - normalisedLookatDirection);
-            /*
-                IF TARGETANGLE > LOOKATDIRECTION => desiredAngle = TARGETANGLE - PI
-
-                IF TARGETANGLE < LOOKATDIRECTION => desiredAngle = TARGETANGLE + PI
-             */
-
-            //var desiredAngle = Math.PI;
-            //if (targetAngle > Math.PI)
-            //    desiredAngle = targetAngle - Math.PI;
-            //else if (targetAngle < Math.PI)
-            //    desiredAngle = targetAngle + Math.PI;
-            //else if (targetAngle == Math.PI)
-            //    desiredAngle = targetAngle + Math.PI;
-
             var tolerance = _movementUtility.GetAngleTolerance(currentSoldier, targetSoldier);
 
-            // how much we need to turn
-            var rotationDiff = normLookatDirection - targetAngleNorm;
-
-            if (rotationDiff >= tolerance)
-                command.RotateRight = true;
-            else if (rotationDiff <= -tolerance)
-                command.RotateLeft = true;
-            else
-                Console.WriteLine();
-
-            // if we need to turn more than 180, its faster to turn the other way
-            //if (rotationDiff > Math.PI && (command.RotateRight || command.RotateLeft))
-            //{
-            //    command.RotateLeft = !command.RotateLeft;
-            //    command.RotateRight = !command.RotateRight;
-            //}
-
-            //else if (rotationDiff >= tolerance || rotationDiff < -tolerance)
-            //{
-            //    command.RotateLeft = rotationDiff < 0 + ROTATION_ACCURACY;
-            //    command.RotateRight = rotationDiff > 0 - ROTATION_ACCURACY;
-            //}
+            if (Math.Abs(currentSoldier.LookAtDirection - targetAngle) > tolerance)
+            {
+                var targetDirection = _movementUtility.GetDirection(currentSoldier.LookAtDirection, targetAngle);
+                command.RotateRight = targetDirection == Directions.Right;
+                command.RotateLeft = targetDirection == Directions.Left;
+            }
 
             if (!command.RotateLeft && !command.RotateRight)
                 command.MoveForward = true;
 
-            //if (desiredAngle <= ROTATION_LIMIT + tolerance && desiredAngle >= ROTATION_LIMIT - tolerance)
-            //{
-            //    //TARGET IS BEHIND US
-            //    command.MoveBackward = true;
-            //    command.MoveForward = false;
-
-            //    command.RotateRight = !command.RotateRight;
-            //    command.RotateLeft = !command.RotateLeft;
-            //    return command;
-
-            //}
-
-            //var distance = _movementUtility.DistanceBetween(currentSoldier.Position, targetSoldier.Position);
-
-            //command.MoveForward = DISTANCE_TO_STOP < distance;
             return command;
         }
 
+
+        //////////////////////// big words under this line ///////////////////////////////////
         private Tuple<float, float> PredictNextPosition(Soldier soldier)
         {
             var direction = soldier.LookAtDirection;
@@ -150,8 +97,7 @@ namespace KillEmAll
         {
             if (radian < 0)
                 return Math.PI * 2 - Math.Abs(radian);
-            else
-                return radian;
+            return radian;
         }
     }
 }
