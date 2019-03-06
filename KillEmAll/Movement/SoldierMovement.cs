@@ -4,6 +4,8 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using Hackathon.Public;
+using KillEmAll.Enums;
+using KillEmAll.momsspaghetti;
 using KillEmAll.Utility.Interfaces;
 
 namespace KillEmAll
@@ -17,21 +19,27 @@ namespace KillEmAll
     public class SoldierMovement : ISoldierMovement
     {
         private const int MAGIC_NUMBER = 1;
-        private const double ROTATION_LIMIT = Math.PI / 4;
+        private const double ROTATION_LIMIT = Math.PI;
         private const float ROTATION_ACCURACY = 0.008f;
         private const float MINIMUM_DISTANCE = 2.5f;
-        private const float DISTANCE_MARGIN = 0.1f;
+        private const float DISTANCE_TO_STOP = 0.1f;
+        private const float  DEFAULT_RADIUS = 0.05f;
 
-        private IPointUtility _pointUtility;
+        private MovementUtility _movementUtility;
 
-        public SoldierMovement(IPointUtility pointUtility)
+        public SoldierMovement(MovementUtility movementUtility)
         {
-            _pointUtility = pointUtility;
+            _movementUtility = movementUtility;
         }
 
         public SoldierCommand MoveToLocation(Soldier currentSoldier, PointF target, TargetType targetType, ref SoldierCommand command)
         {
-            return MoveToLocation(currentSoldier, new Soldier(null, null, target, 0, 0, 0, 0, 0, 0), targetType, ref command);
+            return MoveToLocation(currentSoldier, new Soldier(null, null, target, DEFAULT_RADIUS, 0, 0, 0, 0, 0), targetType, ref command);
+        }
+
+        public SoldierCommand MoveToLocation(Soldier currentSoldier, GameObject target, TargetType targetType, ref SoldierCommand command)
+        {
+            return MoveToLocation(currentSoldier, new Soldier(null, null, target.Position, target.Radius, 0, 0, 0, 0, 0), targetType, ref command);
         }
 
         // the function does too many things (rotate, forward-backward movement, shooting)
@@ -41,67 +49,71 @@ namespace KillEmAll
             var targetSpeed = targetSoldier.Speed;
             var targetDirection = targetSoldier.LookAtDirection;
 
-            var futurePosition = PredictNextPosition(targetSoldier);
-
-            var desiredAngle = _pointUtility.GetAngleBetween(currentSoldier.Position, new PointF(futurePosition.Item1, futurePosition.Item2));
-            //var desiredAngle = GetDesiredAngle(currentSoldier.Position, targetSoldier.Position);
-
-            var normlookatDirection = NormaliseRadian(currentSoldier.LookAtDirection);
-            var normDesiredAngle = NormaliseRadian((float)desiredAngle);
-
-            var rotationDiff = normlookatDirection - normDesiredAngle;
-
-            if (targetType == TargetType.ENEMY && Math.Abs(rotationDiff) < ROTATION_ACCURACY && currentSoldier.TimeTillCanShoot == 0)
-            {
-                command.Shoot = true;
-                return command;
-            }
-
-            var distance = Math.Sqrt(currentSoldier.Position.X - targetSoldier.Position.X) * (currentSoldier.Position.X - targetSoldier.Position.X) + (currentSoldier.Position.Y - targetSoldier.Position.Y) * (currentSoldier.Position.Y - targetSoldier.Position.Y);
+            var targetAngle = _movementUtility.GetTargetAngle(currentSoldier, targetSoldier);
+            //var targetAngle = Math.Atan2(currentSoldier.Position.Y - targetSoldier.Position.Y, currentSoldier.Position.X - targetSoldier.Position.X);
 
 
-            command.MoveForward = targetType == TargetType.ENEMY;
+            var targetAngleNorm = NormaliseRadian(targetAngle);
+            var normLookatDirection = NormaliseRadian(currentSoldier.LookAtDirection);
+            //var rotationDiff = normalisedLookatDirection - normTargetAngle;
+            //var amountToRotate = Math.Abs(rotationDiff) + Math.Abs(normTargetAngle - normalisedLookatDirection);
+            /*
+                IF TARGETANGLE > LOOKATDIRECTION => desiredAngle = TARGETANGLE - PI
 
-            if (rotationDiff > ROTATION_ACCURACY)
+                IF TARGETANGLE < LOOKATDIRECTION => desiredAngle = TARGETANGLE + PI
+             */
+
+            //var desiredAngle = Math.PI;
+            //if (targetAngle > Math.PI)
+            //    desiredAngle = targetAngle - Math.PI;
+            //else if (targetAngle < Math.PI)
+            //    desiredAngle = targetAngle + Math.PI;
+            //else if (targetAngle == Math.PI)
+            //    desiredAngle = targetAngle + Math.PI;
+
+            var tolerance = _movementUtility.GetAngleTolerance(currentSoldier, targetSoldier);
+
+            // how much we need to turn
+            var rotationDiff = normLookatDirection - targetAngleNorm;
+
+            if (rotationDiff >= tolerance)
                 command.RotateRight = true;
-            else if (rotationDiff < -ROTATION_ACCURACY)
+            else if (rotationDiff <= -tolerance)
                 command.RotateLeft = true;
-            else 
+            else
+                Console.WriteLine();
+
+            // if we need to turn more than 180, its faster to turn the other way
+            //if (rotationDiff > Math.PI && (command.RotateRight || command.RotateLeft))
+            //{
+            //    command.RotateLeft = !command.RotateLeft;
+            //    command.RotateRight = !command.RotateRight;
+            //}
+
+            //else if (rotationDiff >= tolerance || rotationDiff < -tolerance)
+            //{
+            //    command.RotateLeft = rotationDiff < 0 + ROTATION_ACCURACY;
+            //    command.RotateRight = rotationDiff > 0 - ROTATION_ACCURACY;
+            //}
+
+            if (!command.RotateLeft && !command.RotateRight)
                 command.MoveForward = true;
-                
 
-            if (targetType == TargetType.OBJECT)
-                return command;
+            //if (desiredAngle <= ROTATION_LIMIT + tolerance && desiredAngle >= ROTATION_LIMIT - tolerance)
+            //{
+            //    //TARGET IS BEHIND US
+            //    command.MoveBackward = true;
+            //    command.MoveForward = false;
 
-            if (distance <= MINIMUM_DISTANCE * (1 + DISTANCE_MARGIN) && distance >= MINIMUM_DISTANCE * (1 - DISTANCE_MARGIN))
-            {
-                command.MoveForward = false;
-                command.MoveBackward = false;
-                return command;
-            }
+            //    command.RotateRight = !command.RotateRight;
+            //    command.RotateLeft = !command.RotateLeft;
+            //    return command;
 
-            if (distance <= MINIMUM_DISTANCE && Math.Abs(rotationDiff) > ROTATION_LIMIT)
-            {
-                command.MoveForward = false;
-                command.MoveBackward = true;
+            //}
 
-                command.RotateLeft = !command.RotateLeft;
-                command.RotateRight = !command.RotateRight;
-            }
-            return command;
-        }
+            //var distance = _movementUtility.DistanceBetween(currentSoldier.Position, targetSoldier.Position);
 
-        public SoldierCommand TurnTowards(Soldier currentSoldier, Soldier targetSoldier, ref SoldierCommand command)
-        {
-            var desiredAngle = _pointUtility.GetAngleBetween(currentSoldier.Position, targetSoldier.Position);
-
-            var rotationDiff = currentSoldier.LookAtDirection - desiredAngle;
-
-            if (rotationDiff > 0)
-                command.RotateRight = true;
-            else if (rotationDiff < 0)
-                command.RotateLeft = true;
-
+            //command.MoveForward = DISTANCE_TO_STOP < distance;
             return command;
         }
 
@@ -145,10 +157,10 @@ namespace KillEmAll
             return Tuple.Create(futureX, futureY);
         }
 
-        private float NormaliseRadian(float radian)
+        private double NormaliseRadian(double radian)
         {
             if (radian < 0)
-                return (float)Math.PI * 2 - Math.Abs(radian);
+                return Math.PI * 2 - Math.Abs(radian);
             else
                 return radian;
         }

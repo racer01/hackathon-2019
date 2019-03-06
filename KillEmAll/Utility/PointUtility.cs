@@ -22,8 +22,7 @@ namespace KillEmAll.Utility
 
         public float DistanceBetween(PointF point1, PointF point2, bool useCache = false)
         {
-            var result = (point1.X - point2.X) * (point1.X - point2.X) + (point1.Y - point2.Y) * (point1.Y - point2.Y);
-            return result;
+            return (float)Math.Sqrt((point1.X - point2.X) * (point1.X - point2.X) + (point1.Y - point2.Y) * (point1.Y - point2.Y));
         }
 
         // target should be a wall

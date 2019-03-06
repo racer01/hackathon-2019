@@ -8,6 +8,8 @@ using KillEmAll.Helpers;
 using KillEmAll.Utility.Interfaces;
 using KillEmAll.Utility;
 using System.Diagnostics;
+using KillEmAll.momsspaghetti;
+using WallMapping = KillEmAll.Helpers.WallMapping;
 
 namespace KillEmAll
 {
@@ -23,18 +25,18 @@ namespace KillEmAll
         private ITargetFinder _targetFinder;
         private IGameStateProvider _stateProvider;
         private IWallMapping _wallMapping;
-        private IPointUtility _pointUtility;
+        private MovementUtility _movementUtility;
         private IPathFinding _pathFinding;
 
         public void Initialize(string squadId, GameOptions options)
         {
             _stopWatch = new Stopwatch();
             _randomGen = new Random();
-            _pointUtility = new PointUtility();
-            _soldierMovement = new SoldierMovement(_pointUtility);
+            _movementUtility = new MovementUtility();
+            _soldierMovement = new SoldierMovement(_movementUtility);
             _stateProvider = new GameStateProvider();
             _wallMapping = new WallMapping(options.MapSize.Width, options.MapSize.Height);
-            _targetFinder = new TargetFinder(_stateProvider, _wallMapping, _pointUtility);
+            _targetFinder = new TargetFinder(_stateProvider, _wallMapping, _movementUtility);
             _pathFinding = new PathFinding(_wallMapping);
         }
 

@@ -8,6 +8,6 @@ namespace KillEmAll
 
         SoldierCommand MoveToLocation(Soldier currentSoldier, PointF target, TargetType targetType, ref SoldierCommand command);
 
-        SoldierCommand TurnTowards(Soldier currentSoldier, Soldier targetSoldier, ref SoldierCommand command);
+        SoldierCommand MoveToLocation(Soldier currentSoldier, GameObject target, TargetType targetType, ref SoldierCommand command);
     }
 }

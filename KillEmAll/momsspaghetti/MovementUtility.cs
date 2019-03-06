@@ -1,20 +1,21 @@
 ﻿using System;
 using Hackathon.Public;
+using KillEmAll.Enums;
 
 namespace KillEmAll.momsspaghetti
 {
     public class MovementUtility
     {
-        public string GetDirection(double currentAngle, double targetAngle)
+        public Directions GetDirection(double currentAngle, double targetAngle)
         {
             currentAngle = currentAngle < 0 ? 2 * Math.PI + currentAngle : currentAngle;
             targetAngle = targetAngle < 0 ? 2 * Math.PI + targetAngle : targetAngle;
 
             if (targetAngle > currentAngle)
             {
-                return (targetAngle - currentAngle < Math.PI) ? "left" : "right";
+                return (targetAngle - currentAngle < Math.PI) ? Directions.Left : Directions.Right;
             }
-            return (currentAngle - targetAngle > Math.PI) ? "left" : "right";
+            return (currentAngle - targetAngle > Math.PI) ? Directions.Left : Directions.Right;
 
         }
 
@@ -50,9 +51,13 @@ namespace KillEmAll.momsspaghetti
 
         public double GetAngleTolerance(GameObject me, GameObject notMe)
         {
-            var dist = Math.Sqrt(Math.Pow(Math.Abs(me.Position.X - notMe.Position.X), 2) +
-                                 Math.Pow(Math.Abs(me.Position.Y - notMe.Position.Y), 2));
+            var dist = DistanceBetween(me.Position, notMe.Position);
             return Math.Atan(notMe.Radius / dist);
+        }
+
+        public double DistanceBetween(PointF point1, PointF point2)
+        {
+            return Math.Sqrt(Math.Pow(Math.Abs(point1.X - point2.X), 2) + Math.Pow(Math.Abs(point1.Y - point2.Y), 2));
         }
     }
 }

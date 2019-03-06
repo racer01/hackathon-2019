@@ -51,6 +51,7 @@
   <ItemGroup>
     <Compile Include="Enums\Axis.cs" />
     <Compile Include="Enums\DiagonalCheckType.cs" />
+    <Compile Include="Enums\Directions.cs" />
     <Compile Include="Enums\RelativePosition.cs" />
     <Compile Include="Helpers\GameStateProvider.cs" />
     <Compile Include="Helpers\Interfaces\IGameStateProvider.cs" />
