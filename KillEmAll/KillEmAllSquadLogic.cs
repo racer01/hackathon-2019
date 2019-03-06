@@ -126,11 +126,8 @@ namespace KillEmAll
             if (target != null)
                 return target;
 
-            target = _targetFinder.GetClosestHealth(soldier, state.VisibleHealthBonuses);
-            if (target != null)
-                return target;
+            return _targetFinder.GetClosestHealth(soldier, state.VisibleHealthBonuses);
             //
-
 
         }
 
