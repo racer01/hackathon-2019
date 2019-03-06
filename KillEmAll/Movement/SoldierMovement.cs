@@ -4,12 +4,6 @@ using KillEmAll.momsspaghetti;
 
 namespace KillEmAll
 {
-    public enum TargetType
-    {
-        ENEMY,
-        OBJECT
-    }
-
     public class SoldierMovement : ISoldierMovement
     {
         private const int MAGIC_NUMBER = 1;
