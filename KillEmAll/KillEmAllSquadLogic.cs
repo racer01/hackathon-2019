@@ -80,17 +80,22 @@ namespace KillEmAll
             return commands;
         }
 
+        // TODO: smart priorization, also include discovering
         private GameObject SelectTarget(Soldier soldier, GameState state)
         {
-            GameObject target = state.VisibleTreasures.FirstOrDefault();
+            GameObject target = _targetFinder.GetClosestVisibleEnemy(soldier);
+            if (target != null)
+                return target;
 
-            if (target == null)
-                target = state.VisibleAmmoBonuses.FirstOrDefault();
+            target = state.VisibleTreasures.FirstOrDefault();
+            if (target != null)
+                return target;
 
-            if (target == null)
-                return state.VisibleHealthBonuses.FirstOrDefault();
+            target = state.VisibleAmmoBonuses.FirstOrDefault();
+            if (target != null)
+                return target;
 
-            return target;
+            return state.VisibleHealthBonuses.FirstOrDefault();
         }
     }
 }
