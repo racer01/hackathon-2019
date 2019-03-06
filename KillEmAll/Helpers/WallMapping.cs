@@ -15,21 +15,22 @@ namespace KillEmAll.Helpers
         private const int X = 0;
         private const int Y = 1;
 
-        private MapCell[,] _cells;
-        private static PointF[] _blockingWalls = new PointF[WALL_CHECK_RANGE];
+        private readonly MapCell[,] _cells;
+        private static readonly PointF[] _blockingWalls = new PointF[WALL_CHECK_RANGE];
         private static int[,] _skipMapping;
+
         public List<int[]> ReachableUnknowns { get; set; }
 
-        private readonly Dictionary<RelativePosition, int[]> Directions = new Dictionary<RelativePosition, int[]>
+        private readonly Dictionary<RelativePosition, int[]> _directions = new Dictionary<RelativePosition, int[]>
         {
-            {RelativePosition.ABOVE, new int[] { 0, 1 } },
-            {RelativePosition.BELOW, new int[] { 0, -1 } },
-            {RelativePosition.RIGHT, new int[] { 1, 0 } },
-            {RelativePosition.LEFT, new int[] { -1, 0 } },
-            {RelativePosition.ABOVE | RelativePosition.RIGHT, new int[] { 1, 1 } },
-            {RelativePosition.ABOVE | RelativePosition.LEFT, new int[] { -1, 1 } },
-            {RelativePosition.BELOW | RelativePosition.RIGHT, new int[] { 1, -1 } },
-            {RelativePosition.BELOW | RelativePosition.LEFT, new int[] { -1, -1 } },
+            {RelativePosition.ABOVE, new [] { 0, 1 } },
+            {RelativePosition.BELOW, new [] { 0, -1 } },
+            {RelativePosition.RIGHT, new [] { 1, 0 } },
+            {RelativePosition.LEFT, new [] { -1, 0 } },
+            {RelativePosition.ABOVE | RelativePosition.RIGHT, new [] { 1, 1 } },
+            {RelativePosition.ABOVE | RelativePosition.LEFT, new [] { -1, 1 } },
+            {RelativePosition.BELOW | RelativePosition.RIGHT, new [] { 1, -1 } },
+            {RelativePosition.BELOW | RelativePosition.LEFT, new [] { -1, -1 } },
         };
 
         public WallMapping(int mapSizeX, int mapSizeY)
@@ -54,7 +55,6 @@ namespace KillEmAll.Helpers
         {
             if (x >= _cells.GetLength(0) || x < 0 || y >= _cells.GetLength(1) || y < 0)
                 return;
-
             _cells[x, y] = value;
         }
 
@@ -224,7 +224,7 @@ namespace KillEmAll.Helpers
 
         private WeightedPoint GetCellInDirection(int[] origin, RelativePosition position)
         {
-            var direction = Directions[position];
+            var direction = _directions[position];
             var nextX = origin[X] + direction[X];
             var nextY = origin[Y] + direction[Y];
 
@@ -232,6 +232,7 @@ namespace KillEmAll.Helpers
         }
 
 
+        ///////////////////////////////////////////////////////////////////////////////
         public List<PointF> GetCrossedWalls(PointF point1, PointF point2)
         {
             var crossedWalls = new List<PointF>();
@@ -286,8 +287,7 @@ namespace KillEmAll.Helpers
         {
             if (endingPoint.X - startingPoint.X != 0)
                 return (endingPoint.Y - startingPoint.Y) / (endingPoint.X - startingPoint.X);
-            else
-                return float.MaxValue;
+            return float.MaxValue;
         }
 
         private PointF GetPointOfLineForX(PointF knownPoint, float slope, float x)
@@ -300,8 +300,7 @@ namespace KillEmAll.Helpers
         {
             if (slope != 0)
                 return new PointF((y - knownPoint.Y) / slope + knownPoint.X, y);
-            else
-                return new PointF(float.MaxValue, y);
+            return new PointF(float.MaxValue, y);
         }
     }
 }
