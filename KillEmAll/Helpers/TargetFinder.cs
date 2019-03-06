@@ -11,12 +11,14 @@ namespace KillEmAll.Helpers
         private readonly IGameStateProvider _gameStateProvider;
         private readonly IWallMapping _wallMapping;
         private readonly MovementUtility _movementUtility;
+        private readonly GameOptions _gameOptions;
 
-        public TargetFinder(IGameStateProvider gameStateProvider, IWallMapping wallMapping, MovementUtility movementUtility)
+        public TargetFinder(IGameStateProvider gameStateProvider, IWallMapping wallMapping, MovementUtility movementUtility, GameOptions gameOptions)
         {
             _gameStateProvider = gameStateProvider;
             _wallMapping = wallMapping;
             _movementUtility = movementUtility;
+            _gameOptions = gameOptions;
         }
 
         /////////
@@ -55,7 +57,8 @@ namespace KillEmAll.Helpers
         public Soldier[] GetVisibleEnemies(Soldier currentSoldier, float fov = 0)
         {
             var gameState = _gameStateProvider.Get();
-            var visibleEnemies = new Soldier[gameState.MySquad.Length * (gameState.Squads.Length - 1)];
+            var visibleEnemies = new Soldier[_gameOptions.SquadSize * (_gameOptions.SquadCount  - 1)];
+            var storeIndex = 0;
 
             for (var i = 0; i < gameState.VisibleEnemies.Length; i++)
             {
@@ -65,7 +68,7 @@ namespace KillEmAll.Helpers
                 if (walls != null && walls.Count > 0)
                     continue;
 
-                visibleEnemies[i] = target;
+                visibleEnemies[storeIndex++] = target;
             }
             return visibleEnemies;
         }
@@ -108,6 +111,7 @@ namespace KillEmAll.Helpers
         {
             var gameState = _gameStateProvider.Get();
             var visibleTreasures = new Treasure[gameState.VisibleTreasures.Length];
+            var storeIndex = 0;
 
             for (var i = 0; i < gameState.VisibleTreasures.Length; i++)
             {
@@ -117,7 +121,7 @@ namespace KillEmAll.Helpers
                 if (walls != null && walls.Count > 0)
                     continue;
 
-                visibleTreasures[i] = target;
+                visibleTreasures[storeIndex++] = target;
             }
             return visibleTreasures;
         }
@@ -160,6 +164,7 @@ namespace KillEmAll.Helpers
         {
             var gameState = _gameStateProvider.Get();
             var visibleAmmos = new AmmoBonus[gameState.VisibleAmmoBonuses.Length];
+            var storeIndex = 0;
 
             for (var i = 0; i < gameState.VisibleAmmoBonuses.Length; i++)
             {
@@ -169,7 +174,7 @@ namespace KillEmAll.Helpers
                 if (walls != null && walls.Count > 0)
                     continue;
 
-                visibleAmmos[i] = target;
+                visibleAmmos[storeIndex++] = target;
             }
             return visibleAmmos;
         }
@@ -212,6 +217,7 @@ namespace KillEmAll.Helpers
         {
             var gameState = _gameStateProvider.Get();
             var visibleHealths = new HealthBonus[gameState.VisibleHealthBonuses.Length];
+            var storeIndex = 0;
 
             for (var i = 0; i < gameState.VisibleHealthBonuses.Length; i++)
             {
@@ -221,7 +227,7 @@ namespace KillEmAll.Helpers
                 if (walls != null && walls.Count > 0)
                     continue;
 
-                visibleHealths[i] = target;
+                visibleHealths[storeIndex++] = target;
             }
             return visibleHealths;
         }

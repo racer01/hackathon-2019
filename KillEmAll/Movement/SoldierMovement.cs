@@ -32,7 +32,7 @@ namespace KillEmAll
                 command.RotateLeft = targetDirection == Directions.Left;
             }
 
-            if (!command.RotateLeft && !command.RotateRight)
+            //if (!command.RotateLeft && !command.RotateRight)
                 command.MoveForward = true;
 
             return command;

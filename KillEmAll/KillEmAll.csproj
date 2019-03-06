@@ -57,6 +57,7 @@
     <Compile Include="Helpers\Interfaces\IGameStateProvider.cs" />
     <Compile Include="Helpers\Interfaces\ITargetFinder.cs" />
     <Compile Include="Helpers\Interfaces\IWallMapping.cs" />
+    <Compile Include="Helpers\SoldierPathMapping.cs" />
     <Compile Include="Helpers\TargetFinder.cs" />
     <Compile Include="Helpers\WallMapping.cs" />
     <Compile Include="KillEmAllSquadLogic_trainer.cs" />
