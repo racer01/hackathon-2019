@@ -7,7 +7,7 @@ using System;
 namespace KillEmAll
 {
     [Export(typeof(ISquadLogic))]
-    [ExportMetadata("SquadName", "copy")]
+    [ExportMetadata("SquadName", "trainer")]
     [ExportMetadata("SquadImageResource", "KillEmAll.Resources.Face.png")]
     public class KillEmAllSquadLogicCopy : ISquadLogic
     {
@@ -23,8 +23,8 @@ namespace KillEmAll
             {
                 var command = new SoldierCommand() { Soldier = s };
 
-                //command.MoveForward = true;
-                //command.RotateRight = true;
+                command.MoveForward = true;
+                command.RotateRight = true;
                 return command;
             });
         }

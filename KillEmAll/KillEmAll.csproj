@@ -59,7 +59,7 @@
     <Compile Include="Helpers\Interfaces\IWallMapping.cs" />
     <Compile Include="Helpers\TargetFinder.cs" />
     <Compile Include="Helpers\WallMapping.cs" />
-    <Compile Include="KillEmAllSquadLogic - Copy.cs" />
+    <Compile Include="KillEmAllSquadLogic_trainer.cs" />
     <Compile Include="KillEmAllSquadLogic.cs" />
     <Compile Include="Enums\TargetType.cs" />
     <Compile Include="Utility\MovementUtility.cs" />
