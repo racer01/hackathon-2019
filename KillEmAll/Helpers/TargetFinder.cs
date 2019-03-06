@@ -3,6 +3,7 @@ using KillEmAll.Helpers.Interfaces;
 using System;
 using System.Collections.Generic;
 using KillEmAll.Utility;
+using System.Linq;
 
 namespace KillEmAll.Helpers
 {
@@ -76,23 +77,26 @@ namespace KillEmAll.Helpers
 
         ////////////
         // TREASURE
-        public Treasure GetClosestVisibleTreasure(Soldier currentSoldier, float fov = 0)
+        public Treasure GetClosestVisibleTreasure(Soldier currentSoldier, List<string> chosenTreasures, float fov = 0)
         {
             var treasures = GetVisibleTreasures(currentSoldier);
-            return GetClosestTreasure(currentSoldier, treasures);
+            return GetClosestTreasure(currentSoldier, chosenTreasures, treasures);
         }
 
-        public Treasure GetClosestTreasureOfAll(Soldier currentSoldier, float fov = 0)
+        public Treasure GetClosestTreasureOfAll(Soldier currentSoldier, List<string> chosenTreasures, float fov = 0)
         {
             var treasures = _gameStateProvider.Get().VisibleTreasures;
-            return GetClosestTreasure(currentSoldier, treasures);
+            return GetClosestTreasure(currentSoldier, chosenTreasures, treasures);
         }
 
-        public Treasure GetClosestTreasure(Soldier currentSoldier, Treasure[] treasures)
+        public Treasure GetClosestTreasure(Soldier currentSoldier, List<string> chosenTreasures, Treasure[] treasures)
         {
             Treasure closestTreasure = null;
+            Treasure[] filtered = treasures;
+
             var closestDistance = double.MaxValue;
-            foreach (var treasure in treasures)
+
+            foreach (var treasure in filtered)
             {
                 if (treasure == null)
                     break;

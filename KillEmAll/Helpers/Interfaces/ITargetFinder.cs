@@ -1,4 +1,5 @@
 ﻿using Hackathon.Public;
+using System.Collections.Generic;
 
 namespace KillEmAll.Helpers.Interfaces
 {
@@ -15,9 +16,9 @@ namespace KillEmAll.Helpers.Interfaces
         // TREASURE
         Treasure[] GetVisibleTreasures(Soldier currentSoldier, float fov = 0f);
 
-        Treasure GetClosestTreasure(Soldier currentSoldier, Treasure[] treasures);
+        Treasure GetClosestTreasure(Soldier currentSoldier, List<string> chosenTreasures, Treasure[] treasures);
 
-        Treasure GetClosestVisibleTreasure(Soldier currentSoldier, float fov = 0);
+        Treasure GetClosestVisibleTreasure(Soldier currentSoldier, List<string> chosenTreasures, float fov = 0);
 
 
         // AMMO

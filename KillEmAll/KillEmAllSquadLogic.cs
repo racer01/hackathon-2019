@@ -29,6 +29,10 @@ namespace KillEmAll
         private float _cellSize;
         private SoldierPathMapping _pathMapping;
 
+        private List<string> _chosenTreasures;
+        private List<string> _chosenHealths;
+        private List<string> _chosenAmmos;
+
         public void Initialize(string squadId, GameOptions options)
         {
             _cellSize = 1.0f;
@@ -41,12 +45,20 @@ namespace KillEmAll
             _targetFinder = new TargetFinder(_stateProvider, _wallMapping, _movementUtility, options);
             _pathFinding = new PathFinding(_wallMapping);
             _pathMapping = new SoldierPathMapping();
+
+            _chosenTreasures = new List<string>();
+            _chosenHealths = new List<string>();
+            _chosenAmmos = new List<string>();
         }
 
         public IEnumerable<Hackathon.Public.SoldierCommand> Update(GameState state)
         {
             _stopWatch.Start();
             _stateProvider.Set(state);
+
+            _chosenTreasures.Clear();
+            _chosenHealths.Clear();
+            _chosenAmmos.Clear();
 
             // update our kown map
             _wallMapping.StoreVisibleArea(state.VisibleArea);
@@ -100,13 +112,19 @@ namespace KillEmAll
 
 
             //TREASURE
-            target = _targetFinder.GetClosestVisibleTreasure(soldier);
+            target = _targetFinder.GetClosestVisibleTreasure(soldier, _chosenTreasures);
             if (target != null)
+            {
+                _chosenTreasures.Add(target.Id);
                 return target;
-
-            target = _targetFinder.GetClosestTreasure(soldier, state.VisibleTreasures);
+            }
+            
+            target = _targetFinder.GetClosestTreasure(soldier, _chosenTreasures, state.VisibleTreasures);
             if (target != null)
+            {
+                _chosenTreasures.Add(target.Id);
                 return target;
+            }
             //
 
 
