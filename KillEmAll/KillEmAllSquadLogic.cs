@@ -51,17 +51,15 @@ namespace KillEmAll
 
             var commands = state.MySquad.Select(soldier => {
                 var command = new SoldierCommand() { Soldier = soldier };
-
-                GameObject target = state.VisibleTreasures.FirstOrDefault();
-
-                if (target == null)
-                    target = state.VisibleAmmoBonuses.FirstOrDefault();
-
-                if (target == null)
-                    target = state.VisibleHealthBonuses.FirstOrDefault();
+                var target = SelectTarget(soldier, state);
 
                 if (target == null)
                     return command;
+
+                if (_wallMapping.GetCrossedWalls(soldier.Position, target.Position).Count == 0)
+                {
+                    return _soldierMovement.MoveToObject(soldier, target, ref command);
+                }
 
                 var path = _pathFinding.GetCellPath(soldier.Position, target.Position);
                 path = _pathFinding.CellIndexesToPoints(path, _cellSize / 2);
@@ -70,9 +68,7 @@ namespace KillEmAll
                     return command;
 
                 path[0] = target.Position;
-
                 var nextCell = path.Count > 1 ? path.ElementAt(path.Count - 2) : path.First();
-
                 return _soldierMovement.MoveToLocation(soldier, nextCell, 0.1f, ref command);
             });
 
@@ -82,6 +78,19 @@ namespace KillEmAll
             _stopWatch.Reset();
 
             return commands;
+        }
+
+        private GameObject SelectTarget(Soldier soldier, GameState state)
+        {
+            GameObject target = state.VisibleTreasures.FirstOrDefault();
+
+            if (target == null)
+                target = state.VisibleAmmoBonuses.FirstOrDefault();
+
+            if (target == null)
+                return state.VisibleHealthBonuses.FirstOrDefault();
+
+            return target;
         }
     }
 }
