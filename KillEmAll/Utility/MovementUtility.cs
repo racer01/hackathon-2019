@@ -2,7 +2,7 @@
 using Hackathon.Public;
 using KillEmAll.Enums;
 
-namespace KillEmAll.momsspaghetti
+namespace KillEmAll.Utility
 {
     public class MovementUtility
     {
