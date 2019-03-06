@@ -1,14 +1,8 @@
 ﻿using Hackathon.Public;
-using KillEmAll.Enums;
 using KillEmAll.Helpers.Interfaces;
 using KillEmAll.momsspaghetti;
-using KillEmAll.Utility;
-using KillEmAll.Utility.Interfaces;
 using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace KillEmAll.Helpers
 {
