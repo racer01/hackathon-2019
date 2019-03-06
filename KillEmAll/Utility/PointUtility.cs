@@ -12,17 +12,8 @@ namespace KillEmAll.Utility
         private const int WALL_SIZE = 1;
         private const int ROUNDING_PRECISION = 1;
 
-        public PointUtility()
-        {
-        }
-
-        public float DistanceBetween(PointF point1, PointF point2, bool useCache = false)
-        {
-            return (float)Math.Sqrt((point1.X - point2.X) * (point1.X - point2.X) + (point1.Y - point2.Y) * (point1.Y - point2.Y));
-        }
-
         // target should be a wall
-        public bool IsInBetween(PointF start, PointF end, PointF target, bool useCache = false)
+        public bool IsInBetween(PointF start, PointF end, PointF target)
         {
             start = new PointF((float)Math.Round(start.X, ROUNDING_PRECISION), (float)Math.Round(start.Y, ROUNDING_PRECISION));
             end = new PointF((float)Math.Round(end.X, ROUNDING_PRECISION), (float)Math.Round(end.Y, ROUNDING_PRECISION));
@@ -203,14 +194,5 @@ namespace KillEmAll.Utility
             return horizontalPos | verticalPos;
         }
 
-        private float CalculateSlope(float x1, float y1, float x2, float y2)
-        {
-            return (y2 - y1) / (x2 - x1);
-        }
-
-        public double GetAngleBetween(PointF currentPoint, PointF targetPoint, bool useCache = false)
-        {
-            return Math.Atan2(targetPoint.Y - currentPoint.Y, targetPoint.X - currentPoint.X);
-        }
     }
 }
