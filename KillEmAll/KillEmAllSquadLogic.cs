@@ -58,6 +58,8 @@ namespace KillEmAll
 
                 if (_wallMapping.GetCrossedWalls(soldier.Position, target.Position).Count == 0)
                 {
+                    if (target is Soldier)
+                        return _soldierMovement.TargetEnemy(soldier, target, ref command);
                     return _soldierMovement.MoveToObject(soldier, target, ref command);
                 }
 
