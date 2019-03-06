@@ -14,6 +14,7 @@ namespace KillEmAll
             _movementUtility = movementUtility;
         }
 
+        // usually used when we dont see the target object and use the pathfinder
         public SoldierCommand MoveToLocation(Soldier currentSoldier, PointF targetPoint, float virtualRadius, ref SoldierCommand command)
         {
             var targetAngle = _movementUtility.GetTargetAngle(currentSoldier, targetPoint);
@@ -33,7 +34,8 @@ namespace KillEmAll
             return command;
         }
 
-        public SoldierCommand MoveToObject(Soldier currentSoldier, GameObject targetSoldier, TargetType targetType, ref SoldierCommand command)
+        // usually used when we see the target object
+        public SoldierCommand MoveToObject(Soldier currentSoldier, GameObject targetSoldier, ref SoldierCommand command)
         {
             var targetAngle = _movementUtility.GetTargetAngle(currentSoldier, targetSoldier.Position);
             var tolerance = _movementUtility.GetAngleTolerance(currentSoldier, targetSoldier);
