@@ -41,8 +41,7 @@ namespace KillEmAll.Utility
         private const int DIAGONAL_G = 14;
         private const int STRAIGHT_G = 10;
 
-
-        private IWallMapping _map;
+        private readonly IWallMapping _map;
 
         public PathFinding(IWallMapping map)
         {

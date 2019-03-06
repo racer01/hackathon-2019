@@ -8,9 +8,9 @@ namespace KillEmAll.Helpers
 {
     public class TargetFinder : ITargetFinder
     {
-        private IGameStateProvider _gameStateProvider;
-        private IWallMapping _wallMapping;
-        private MovementUtility _movementUtility;
+        private readonly IGameStateProvider _gameStateProvider;
+        private readonly IWallMapping _wallMapping;
+        private readonly MovementUtility _movementUtility;
 
         public TargetFinder(IGameStateProvider gameStateProvider, IWallMapping wallMapping, MovementUtility movementUtility)
         {

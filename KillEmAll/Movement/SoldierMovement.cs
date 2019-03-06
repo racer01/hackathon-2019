@@ -14,7 +14,7 @@ namespace KillEmAll
         private const float DISTANCE_TO_STOP = 0.1f;
         private const float  DEFAULT_RADIUS = 0.05f;
 
-        private MovementUtility _movementUtility;
+        private readonly MovementUtility _movementUtility;
 
         public SoldierMovement(MovementUtility movementUtility)
         {
