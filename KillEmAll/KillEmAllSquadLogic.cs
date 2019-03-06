@@ -62,7 +62,7 @@ namespace KillEmAll
                 if (target == null)
                     return command;
 
-                var pathToTreasure = _pathFinding.Asd(s.Position, target.Position);
+                var pathToTreasure = _pathFinding.GetPath(s.Position, target.Position);
 
                 if (pathToTreasure.Count == 0)
                     return command;

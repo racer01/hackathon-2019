@@ -49,7 +49,7 @@ namespace KillEmAll.Utility
             _map = map;
         }
 
-        public List<PointF> Asd(PointF start, PointF target)
+        public List<PointF> GetPath(PointF start, PointF target)
         {
             var weightedStart = new WeightedPoint()
             {
