@@ -49,7 +49,7 @@ namespace KillEmAll.Utility
             _map = map;
         }
 
-        public List<PointF> GetPath(PointF start, PointF target)
+        public List<PointF> GetCellPath(PointF start, PointF target)
         {
             var weightedStart = new WeightedPoint()
             {
@@ -159,7 +159,16 @@ namespace KillEmAll.Utility
             }
             return new List<PointF>();
         }
-     
+
+        public List<PointF> CellIndexesToPoints(List<PointF> path, float shift)
+        {
+            var pointPath = new List<PointF>();
+            foreach (var cell in path)
+            {
+                pointPath.Add(new PointF(cell.X + shift, cell.Y + shift));
+            }
+            return pointPath;
+        }
 
         private int DistanceBetween(WeightedPoint origin, WeightedPoint neighbor)
         {

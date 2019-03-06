@@ -26,9 +26,11 @@ namespace KillEmAll
         private IWallMapping _wallMapping;
         private MovementUtility _movementUtility;
         private IPathFinding _pathFinding;
+        private float _cellSize;
 
         public void Initialize(string squadId, GameOptions options)
         {
+            _cellSize = 1.0f;
             _stopWatch = new Stopwatch();
             _randomGen = new Random();
             _movementUtility = new MovementUtility();
@@ -47,8 +49,8 @@ namespace KillEmAll
             // update our kown map
             _wallMapping.StoreVisibleArea(state.VisibleArea);
 
-            var commands = state.MySquad.Select(s => {
-                var command = new SoldierCommand() { Soldier = s };
+            var commands = state.MySquad.Select(soldier => {
+                var command = new SoldierCommand() { Soldier = soldier };
 
                 GameObject target = state.VisibleTreasures.FirstOrDefault();
 
@@ -61,16 +63,17 @@ namespace KillEmAll
                 if (target == null)
                     return command;
 
-                var pathToTreasure = _pathFinding.GetPath(s.Position, target.Position);
+                var path = _pathFinding.GetCellPath(soldier.Position, target.Position);
+                path = _pathFinding.CellIndexesToPoints(path, _cellSize / 2);
 
-                if (pathToTreasure.Count == 0)
+                if (path.Count == 0)
                     return command;
 
-                pathToTreasure[0] = target.Position;
+                path[0] = target.Position;
 
-                var nextPoint = pathToTreasure.Count > 1 ? pathToTreasure.ElementAt(pathToTreasure.Count - 2) : pathToTreasure.First();
+                var nextCell = path.Count > 1 ? path.ElementAt(path.Count - 2) : path.First();
 
-                return _soldierMovement.MoveToLocation(s, nextPoint, TargetType.OBJECT, ref command);
+                return _soldierMovement.MoveToLocation(soldier, nextCell, TargetType.OBJECT, ref command);
             });
 
             _stopWatch.Stop();
