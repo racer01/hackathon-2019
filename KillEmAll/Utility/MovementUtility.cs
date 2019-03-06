@@ -18,40 +18,40 @@ namespace KillEmAll.Utility
             return (currentAngle - targetAngle > Math.PI) ? Directions.Left : Directions.Right;
         }
 
-        public double GetTargetAngle(GameObject me, GameObject notMe)
+        public double GetTargetAngle(GameObject me, PointF targetPos)
         {
-            if (me.Position.X == notMe.Position.X)
+            if (me.Position.X == targetPos.X)
             {
-                if (me.Position.Y < notMe.Position.Y)
+                if (me.Position.Y < targetPos.Y)
                 {
                     return Math.PI / 2;
                 }
-                if (me.Position.Y > notMe.Position.Y)
+                if (me.Position.Y > targetPos.Y)
                 {
                     return -Math.PI / 2;
                 }
                 // we are on the same spot => no need to rotate
                 return me.LookAtDirection; 
             }
-            if (me.Position.X < notMe.Position.X)
+            if (me.Position.X < targetPos.X)
             {
-                var distY = notMe.Position.Y - me.Position.Y;
-                var distX = notMe.Position.X - me.Position.X;
+                var distY = targetPos.Y - me.Position.Y;
+                var distX = targetPos.X - me.Position.X;
                 var tanAlpha = distY / distX;
                 var alpha = Math.Atan(tanAlpha);
                 return alpha;
             }
-            if (me.Position.X > notMe.Position.X)
+            if (me.Position.X > targetPos.X)
             {
-                var distY = notMe.Position.Y - me.Position.Y;
-                var distX = notMe.Position.X - me.Position.X;
+                var distY = targetPos.Y - me.Position.Y;
+                var distX = targetPos.X - me.Position.X;
                 var tanAlpha = distY / distX;
                 var alpha = Math.Atan(tanAlpha);
-                if (me.Position.Y < notMe.Position.Y)
+                if (me.Position.Y < targetPos.Y)
                     alpha += Math.PI;
-                if (me.Position.Y > notMe.Position.Y)
+                if (me.Position.Y > targetPos.Y)
                     alpha -= Math.PI;
-                if (me.Position.Y == notMe.Position.Y)
+                if (me.Position.Y == targetPos.Y)
                     alpha = Math.PI;
                 return alpha;
             }

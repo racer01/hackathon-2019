@@ -73,7 +73,7 @@ namespace KillEmAll
 
                 var nextCell = path.Count > 1 ? path.ElementAt(path.Count - 2) : path.First();
 
-                return _soldierMovement.MoveToLocation(soldier, nextCell, TargetType.OBJECT, ref command);
+                return _soldierMovement.MoveToLocation(soldier, nextCell, 0.1f, ref command);
             });
 
             _stopWatch.Stop();
