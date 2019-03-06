@@ -112,9 +112,8 @@ namespace KillEmAll.Utility
 
                 var neighbors = _map.GetNeighbourCells(new int[] { current.X, current.Y }, searchType: MapCell.Empty, diagonalCheck: DiagonalCheckType.Never, includeUnknowns: true); // DONT INCLUDE DIAGONAL NEIGHBORS BECAUSE THE SOLDIER GETS STUCK ON THE CORNER OF THE BLOCKS
 
-                for (var i = 0; i < neighbors.Count; i++)
+                foreach (var neighbor in neighbors)
                 {
-                    var neighbor = neighbors[i];
                     if (closedSet.Contains(neighbor))
                         continue;
 
