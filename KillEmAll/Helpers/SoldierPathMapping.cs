@@ -21,6 +21,8 @@ namespace KillEmAll.Helpers
         {
             if (!_pathMapping.ContainsKey(soldier.Id))
                 _pathMapping.Add(soldier.Id, path);
+            else
+                _pathMapping[soldier.Id] = path;
         }
 
         public List<PointF> GetPath(Soldier soldier)

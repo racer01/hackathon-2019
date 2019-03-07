@@ -25,15 +25,19 @@ namespace KillEmAll
             var virtualTarget = new Soldier(null, null, targetPoint, virtualRadius, 0, 0, 0, 0, 0);
             var tolerance = _movementUtility.GetAngleTolerance(currentSoldier, virtualTarget);
 
-            if (Math.Abs(currentSoldier.LookAtDirection - targetAngle) > tolerance)
+            var angleDiff = Math.Abs(currentSoldier.LookAtDirection - targetAngle);
+            if (angleDiff > tolerance)
             {
                 var targetDirection = _movementUtility.GetDirection(currentSoldier.LookAtDirection, targetAngle);
                 command.RotateRight = targetDirection == Directions.Right;
                 command.RotateLeft = targetDirection == Directions.Left;
             }
 
-            //if (!command.RotateLeft && !command.RotateRight)
-                command.MoveForward = true;
+            var distance = _movementUtility.DistanceBetween(currentSoldier.Position, targetPoint);
+
+            command.MoveForward = true;
+            if (InGoodRange(distance) && angleDiff > ANGLE_LIMIT)
+                command.MoveForward = false;
 
             return command;
         }
@@ -51,7 +55,7 @@ namespace KillEmAll
                 command.RotateLeft = targetDirection == Directions.Left;
             }
 
-            if (!command.RotateLeft && !command.RotateRight)
+            //if (!command.RotateLeft && !command.RotateRight)
                 command.MoveForward = true;
 
             return command;

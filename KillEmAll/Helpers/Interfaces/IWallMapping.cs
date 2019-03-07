@@ -27,8 +27,8 @@ namespace KillEmAll.Helpers.Interfaces
 
         List<WeightedPoint> GetNeighbourCells(int[] origin, MapCell searchType = MapCell.Empty, MapCell[,] areaToSeach = null, DiagonalCheckType diagonalCheck = DiagonalCheckType.CheckIfReachable, bool includeUnknowns = false);
 
-        List<int[]> ReachableUnknowns { get; set; }
-
         List<PointF> GetCrossedWalls(PointF point1, PointF point2);
+
+        List<WeightedPoint> ReachableUnkownList { get; set; }
     }
 }

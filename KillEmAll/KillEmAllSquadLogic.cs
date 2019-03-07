@@ -71,6 +71,22 @@ namespace KillEmAll
                 // SELECT THE NEXT STEP, IGNORE THE TARGET IF WE HAVE A PATH STORED ALREADY FOR THE CURRENT SOLDIER
                 var nextCell = GetNextStepTowardsTarget(soldier, target);
 
+                if (nextCell == null)
+                    return command;
+
+                if (target is DiscoveryPoint)
+                {
+                    // it's enough to roughly be in the same cell when discovering
+                    // -> there's no reason to move to the exact target location
+                    // -> stop and remove discovery point 
+                    // -> next update we'll get a new discovery point
+                    if (IsSoldierInSameCellAsTarget(soldier.Position, target.Position))
+                    {
+                        _wallMapping.ReachableUnkownList.RemoveAt(_wallMapping.ReachableUnkownList.Count - 1);
+                        return command;
+                    }
+                }
+
                 if (IsTargetReached(soldier.Position, nextCell))
                     return command;
                 
@@ -85,50 +101,65 @@ namespace KillEmAll
             return commands;
         }
 
+        private bool IsSoldierInSameCellAsTarget(PointF soldierPos, PointF targetPos)
+        {
+            var nextCellX = (int)targetPos.X;
+            var nextCellY = (int)targetPos.Y;
+            return nextCellX < soldierPos.X && nextCellX + 1 > soldierPos.X && soldierPos.Y < nextCellY + 1 && soldierPos.Y > nextCellY;
+        }
+
         // TODO: smart priorization, also include discovering
         private GameObject SelectTarget(Soldier soldier, GameState state)
         {
             //ENEMY
-            GameObject target = _targetFinder.GetClosestVisibleEnemy(soldier);
-            if (target != null)
-                return target;
+            //GameObject target = _targetFinder.GetClosestVisibleEnemy(soldier);
+            //if (target != null)
+            //    return target;
 
-            target = _targetFinder.GetClosestEnemyOfAll(soldier);
-            if (target != null)
-                return target;
+            //target = _targetFinder.GetClosestEnemyOfAll(soldier);
+            //if (target != null)
+            //    return target;
             //
 
 
             //TREASURE
-            target = _targetFinder.GetClosestVisibleTreasure(soldier);
-            if (target != null)
-                return target;
+            //target = _targetFinder.GetClosestVisibleTreasure(soldier);
+            //if (target != null)
+            //    return target;
 
-            target = _targetFinder.GetClosestTreasure(soldier, state.VisibleTreasures);
-            if (target != null)
-                return target;
+            //target = _targetFinder.GetClosestTreasure(soldier, state.VisibleTreasures);
+            //if (target != null)
+            //    return target;
             //
 
 
             //AMMO
-            target = _targetFinder.GetClosestVisibleAmmo(soldier);
-            if (target != null)
-                return target;
+            //target = _targetFinder.GetClosestVisibleAmmo(soldier);
+            //if (target != null)
+            //    return target;
 
-            target = _targetFinder.GetClosestAmmo(soldier, state.VisibleAmmoBonuses);
-            if (target != null)
-                return target;
+            //target = _targetFinder.GetClosestAmmo(soldier, state.VisibleAmmoBonuses);
+            //if (target != null)
+            //    return target;
             //
 
             
             //HEALTH
-            target = _targetFinder.GetClosestVisibleHealth(soldier);
-            if (target != null)
-                return target;
+            //target = _targetFinder.GetClosestVisibleHealth(soldier);
+            //if (target != null)
+            //    return target;
 
-            return _targetFinder.GetClosestHealth(soldier, state.VisibleHealthBonuses);
+            //target = _targetFinder.GetClosestHealth(soldier, state.VisibleHealthBonuses);
+            //if (target != null)
+            //    return target;
             //
 
+            //DISCOVER
+            var discoverTarget = _wallMapping.ReachableUnkownList.LastOrDefault();
+
+            if (discoverTarget != null)
+                return new DiscoveryPoint(Guid.NewGuid().ToString(), new PointF(discoverTarget.X, discoverTarget.Y), 0, 0, 0);
+            return null;
         }
 
         private PointF SelectNextTargetFromPath(Soldier soldier, List<PointF> path)
@@ -164,11 +195,17 @@ namespace KillEmAll
             if (_pathMapping.PathExists(soldier))
                 path = _pathMapping.GetPath(soldier);
             else
+            {
                 path = _pathFinding.GetCellPath(soldier.Position, target.Position);
+
+                // IF WE STORED DISCOVERY POINT PATH, THEN THE SOLDIER WOULDN'T DO ANYTHING ELSE UNTIL HE REACHES THAT POINT
+                // DONT SOCRE THE PATH -> NEXT UPDATE IF THE SOLDIER SEES SOMETHING, HE WILL MOVE TOWARDS THAT POINT INSTEAD
+                if (!(target is DiscoveryPoint))
+                    _pathMapping.StoreNewPath(soldier, path);
+            }
 
             if (path.Count == 0)
                 return null;
-
 
             path = _pathFinding.CellIndexesToPoints(path, _cellSize / 2);
             return SelectNextTargetFromPath(soldier, path);

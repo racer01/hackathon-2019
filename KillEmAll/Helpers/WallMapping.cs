@@ -17,9 +17,16 @@ namespace KillEmAll.Helpers
 
         private readonly MapCell[,] _cells;
         private static readonly PointF[] _blockingWalls = new PointF[WALL_CHECK_RANGE];
-        private static int[,] _skipMapping;
 
-        public List<int[]> ReachableUnknowns { get; set; }
+
+        // USED FOR FAST LOOKUP (we know a coordinate, and want to find out if that is a reachable unknown)
+        public bool[,] ReachableUnknownPoints;
+
+        // used select a reachable unknown (we cant use the bool[,] for this, since we don't know wich coordinates are the unkowns)
+        public List<WeightedPoint> ReachableUnkownList { get; set; }
+
+
+        private static int[,] _skipMapping;
 
         private readonly Dictionary<RelativePosition, int[]> _directions = new Dictionary<RelativePosition, int[]>
         {
@@ -37,7 +44,8 @@ namespace KillEmAll.Helpers
         {
             _cells = new MapCell[mapSizeX, mapSizeY];
             _skipMapping = new int[mapSizeX, mapSizeY];
-            ReachableUnknowns = new List<int[]>();
+            ReachableUnknownPoints = new bool[mapSizeX, mapSizeY];
+            ReachableUnkownList = new List<WeightedPoint>();
         }
 
         public bool IsAlreadyDiscovered(int x, int y)
@@ -103,48 +111,62 @@ namespace KillEmAll.Helpers
         /// <param name="visibleArea"></param>
         public void StoreVisibleArea(MapCell[,] visibleArea)
         {
-            //ReachableUnknowns = new List<int[]>();
-
             for (var i = 0; i < visibleArea.GetLength(0); i++)
             {
-                var jumpCount = -1;
-                var skipX = i;
-                var skipY = 0;
-                var skipAmount = 1;
-                for (var j = 0; j < visibleArea.GetLength(1); j += 1 + skipAmount)
+                for (var j = 0; j < visibleArea.GetLength(1); j++)
                 {
-                    skipAmount = _skipMapping[i, j];
-                    if (skipAmount >= 1)
-                        continue;
-
-                    if (jumpCount == -1)
-                        skipY = j;
-
                     if (IsAlreadyDiscovered(i, j))
-                    {
-                        jumpCount++;
                         continue;
-                    }
 
                     var current = visibleArea[i, j];
                     if (current == MapCell.Wall || current == MapCell.Empty)
                     {
+                        // IF WE ARE HERE -> this cell must be a wall or an empty walkable spot, meaning it cant be an unkown anymore
+                        ReachableUnknownPoints[i, j] = false;
+
+                        ReachableUnkownList = ReachableUnkownList.Where(ru => ru.X != i || ru.Y != j).ToList();
+
+                        // if current cell is empty, it means the neighbors might be reachable unkowns
+                        // this will add (top, right) neighbors as reachable unkowns, which is obviously not correct
+                        // but the above 2 lines will correct that -> when we pass over those points we'll 
+                        // see if they're a wall or empty space and remove them from the ReachableUnkown list if necessary
+                        if (current == MapCell.Empty)
+                            StoreNeighborsAsReachableUnknown(i, j);
+
                         Store(i, j, current);
-
-                        jumpCount++;
-                    }
-                    else
-                    {
-                        if (jumpCount <= 0)
-                            continue;
-
-                        if (skipX < _skipMapping.GetLength(0) && skipY < _skipMapping.GetLength(1) && skipX >= 0 && skipY >= 0)
-                            _skipMapping[skipX, skipY] = jumpCount;
-
-                        jumpCount = -1;
                     }
                 }
             }
+        }
+
+        private void StoreNeighborsAsReachableUnknown(int x, int y)
+        {
+            // VODOO MAGIC!!, ONLY STORE TOP AND RIGHT!!
+            var above = GetCellInDirection(new int[] { x, y }, RelativePosition.ABOVE);
+            var right = GetCellInDirection(new int[] { x, y }, RelativePosition.RIGHT);
+
+            if (!IsCellOutOfBounds(above))
+            {
+                if (!ReachableUnknownPoints[above.X, above.Y] && _cells[above.X, above.Y] == MapCell.Unknown)
+                {
+                    ReachableUnkownList.Add(new WeightedPoint() { X = above.X, Y = above.Y });
+                    ReachableUnknownPoints[above.X, above.Y] = true;
+                }
+            }
+
+            if (!IsCellOutOfBounds(right))
+            {
+                if (!ReachableUnknownPoints[right.X, right.Y] && _cells[right.X, right.Y] == MapCell.Unknown)
+                {
+                    ReachableUnkownList.Add(new WeightedPoint() { X = right.X, Y = right.Y });
+                    ReachableUnknownPoints[right.X, right.Y] = true;
+                }
+            }
+        }
+
+        private bool IsCellOutOfBounds(WeightedPoint pos)
+        {
+            return pos.X >= _cells.GetLength(0) || pos.X < 0 || pos.Y >= _cells.GetLength(1) || pos.Y < 0;
         }
 
         public MapCell GetCellType(int x, int y)

@@ -27,6 +27,7 @@ namespace KillEmAll
         private IPathFinding _pathFinding;
         private float _cellSize;
         private SoldierPathMapping _pathMapping;
+        private bool DISABLE_TRAINER = true;
 
         public void Initialize(string squadId, GameOptions options)
         {
@@ -44,6 +45,10 @@ namespace KillEmAll
 
         public IEnumerable<Hackathon.Public.SoldierCommand> Update(GameState state)
         {
+            if (DISABLE_TRAINER)
+                return state.MySquad.Select(s => new SoldierCommand() { Soldier = s });
+            
+
             _stopWatch.Start();
             _stateProvider.Set(state);
 

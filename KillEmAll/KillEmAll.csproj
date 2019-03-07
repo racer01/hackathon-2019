@@ -49,6 +49,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="DiscoveryPoint.cs" />
     <Compile Include="Enums\Axis.cs" />
     <Compile Include="Enums\DiagonalCheckType.cs" />
     <Compile Include="Enums\Directions.cs" />
