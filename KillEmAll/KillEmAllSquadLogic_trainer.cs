@@ -7,7 +7,6 @@
 //using KillEmAll.Utility;
 //using KillEmAll.Utility.Interfaces;
 //using KillEmAll.Helpers;
-//using System.Diagnostics;
 
 //namespace KillEmAll
 //{
@@ -17,7 +16,6 @@
 //    public class KillEmAllSquadLogicCopy : ISquadLogic
 //    {
 //        private Random _randomGen;
-//        private Stopwatch _stopWatch;
 
 //        private ISoldierMovement _soldierMovement;
 //        private ITargetFinder _targetFinder;
@@ -32,7 +30,6 @@
 //        public void Initialize(string squadId, GameOptions options)
 //        {
 //            _cellSize = 1.0f;
-//            _stopWatch = new Stopwatch();
 //            _randomGen = new Random();
 //            _movementUtility = new MovementUtility();
 //            _soldierMovement = new SoldierMovement(_movementUtility);
@@ -46,7 +43,6 @@
 
 //        public IEnumerable<Hackathon.Public.SoldierCommand> Update(GameState state)
 //        {
-//            _stopWatch.Start();
 //            _stateProvider.Set(state);
 
 //            // update our kown map
@@ -69,12 +65,6 @@
 //                return command;
 //            });
 //            _targetFinder.ClearTargetMapping();
-
-//            _stopWatch.Stop();
-//            Console.Clear();
-//            Console.WriteLine($"Update complated in: {_stopWatch.Elapsed}");
-//            _stopWatch.Reset();
-
 //            return commands;
 //        }
 

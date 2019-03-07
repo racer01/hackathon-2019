@@ -7,7 +7,6 @@ using KillEmAll.Helpers.Interfaces;
 using KillEmAll.Helpers;
 using KillEmAll.Utility.Interfaces;
 using KillEmAll.Utility;
-using System.Diagnostics;
 using WallMapping = KillEmAll.Helpers.WallMapping;
 
 namespace KillEmAll
@@ -18,7 +17,6 @@ namespace KillEmAll
     public class KillEmAllSquadLogic : ISquadLogic
     {
         private Random _randomGen;
-        private Stopwatch _stopWatch;
 
         private ISoldierMovement _soldierMovement;
         private ITargetFinder _targetFinder;
@@ -33,7 +31,6 @@ namespace KillEmAll
         public void Initialize(string squadId, GameOptions options)
         {
             _cellSize = 1.0f;
-            _stopWatch = new Stopwatch();
             _randomGen = new Random();
             _movementUtility = new MovementUtility();
             _soldierMovement = new SoldierMovement(_movementUtility);
@@ -47,7 +44,6 @@ namespace KillEmAll
 
         public IEnumerable<Hackathon.Public.SoldierCommand> Update(GameState state)
         {
-            _stopWatch.Start();
             _stateProvider.Set(state);
 
             // update our kown map
@@ -71,12 +67,6 @@ namespace KillEmAll
                 return command;
             });
             _targetFinder.ClearTargetMapping();
-
-            _stopWatch.Stop();
-            Console.Clear();
-            Console.WriteLine($"Update complated in: {_stopWatch.Elapsed}");
-            _stopWatch.Reset();
-
             return commands;
         }
 
