@@ -92,19 +92,20 @@ namespace KillEmAll.Helpers
         public Treasure GetClosestTreasure(Soldier currentSoldier, List<string> chosenTreasures, Treasure[] treasures)
         {
             Treasure closestTreasure = null;
-            var filtered = treasures.ToList();
+            Treasure[] filtered = new Treasure[treasures.Length];
+            var filterIndex = 0;
 
-            if (filtered.Count() > 0)
+            for (var i = 0; i < treasures.Length; i++)
             {
-                foreach (string ct in chosenTreasures)
+                if (treasures[i] != null)
                 {
-                    if (treasures.Any(t => t.Id == ct))
+                    if (chosenTreasures.All(ct => ct != treasures[i].Id))
                     {
-                        filtered.Remove(filtered.Find(f => f.Id == ct));
+                        filtered[filterIndex] = treasures[i];
+                        filterIndex++;
                     }
                 }
             }
-            // Treasure[] filtered = treasures.Where(t => !chosenTreasures.Any(ct => ct == t.Id)).ToArray();
 
             var closestDistance = double.MaxValue;
 
