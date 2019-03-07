@@ -8,10 +8,10 @@ namespace KillEmAll
     public class SoldierMovement : ISoldierMovement
     {
         private readonly MovementUtility _movementUtility;
-        private const float MAXIUM_DISTANCE = 2f;
+        private const float MAXIUM_DISTANCE = 2.5f;
         private const float MINIUM_DISTANCE = 1f;
         private const float SHOOTING_DISTANCE = 5f;
-        private const double ANGLE_LIMIT = Math.PI / 2;
+        private const double ANGLE_LIMIT = Math.PI * 0.4;
 
         public SoldierMovement(MovementUtility movementUtility)
         {
@@ -35,9 +35,19 @@ namespace KillEmAll
 
             var distance = _movementUtility.DistanceBetween(currentSoldier.Position, targetPoint);
 
+
+            //SLOWER BUT MORE PRECISE MOVEMENT
+
             command.MoveForward = true;
-            if (InGoodRange(distance) && angleDiff > ANGLE_LIMIT)
+
+            if ((command.RotateRight || command.RotateLeft) && currentSoldier.Speed == 2)
                 command.MoveForward = false;
+
+
+            //FASTER MOVEMENT
+            //command.MoveForward = true;
+            //if (InGoodRange(distance) && angleDiff > ANGLE_LIMIT)
+            //    command.MoveForward = false;
 
             return command;
         }
@@ -48,15 +58,18 @@ namespace KillEmAll
             var targetAngle = _movementUtility.GetTargetAngle(currentSoldier, targetObject.Position);
             var tolerance = _movementUtility.GetAngleTolerance(currentSoldier, targetObject);
 
-            if (Math.Abs(currentSoldier.LookAtDirection - targetAngle) > tolerance)
+            var angleDiff = Math.Abs(currentSoldier.LookAtDirection - targetAngle);
+            if (angleDiff > tolerance)
             {
                 var targetDirection = _movementUtility.GetDirection(currentSoldier.LookAtDirection, targetAngle);
                 command.RotateRight = targetDirection == Directions.Right;
                 command.RotateLeft = targetDirection == Directions.Left;
             }
+            var distance = _movementUtility.DistanceBetween(currentSoldier.Position, targetObject.Position);
 
-            //if (!command.RotateLeft && !command.RotateRight)
-                command.MoveForward = true;
+            command.MoveForward = true;
+            if (InGoodRange(distance) && angleDiff > ANGLE_LIMIT)
+                command.MoveForward = false;
 
             return command;
         }

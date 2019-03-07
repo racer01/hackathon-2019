@@ -7,9 +7,9 @@ namespace KillEmAll.Helpers.Interfaces
         // ENEMY
         Soldier[] GetVisibleEnemies(Soldier currentSoldier, float fov = 0);
 
-        Soldier GetClosestVisibleEnemy(Soldier currentSoldier, float fov = 0f);
+        Soldier GetClosestVisibleEnemy(Soldier currentSoldier, float fov = 0f, bool excludeAlreadyTaken = false);
 
-        Soldier GetClosestEnemyOfAll(Soldier currentSoldier);
+        Soldier GetClosestEnemyOfAll(Soldier currentSoldier, bool excludeAlreadyTaken = false);
 
 
         // TREASURE
@@ -34,5 +34,7 @@ namespace KillEmAll.Helpers.Interfaces
         HealthBonus GetClosestHealth(Soldier currentSoldier, HealthBonus[] healths);
 
         HealthBonus GetClosestVisibleHealth(Soldier currentSoldier, float fov = 0);
+
+        void ClearTargetMapping();
     }
 }

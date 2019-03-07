@@ -161,12 +161,10 @@ namespace KillEmAll.Utility
 
         public List<PointF> CellIndexesToPoints(List<PointF> path, float shift)
         {
-            var pointPath = new List<PointF>();
-            foreach (var cell in path)
-            {
-                pointPath.Add(new PointF(cell.X + shift, cell.Y + shift));
-            }
-            return pointPath;
+            for (var i = 0; i < path.Count; i++)
+                path[i] = new PointF(path[i].X + shift, path[i].Y + shift);
+
+            return path;
         }
 
         private int DistanceBetween(WeightedPoint origin, WeightedPoint neighbor)
