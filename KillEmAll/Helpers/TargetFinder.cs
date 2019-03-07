@@ -8,7 +8,7 @@ namespace KillEmAll.Helpers
 {
     public class TargetFinder : ITargetFinder
     {
-        private const int MAXIMUM_TARGETS_ON_ENEMY = 30;
+        private const int MAXIMUM_TARGETS_ON_ENEMY = 3;
         private readonly IGameStateProvider _gameStateProvider;
         private readonly IWallMapping _wallMapping;
         private readonly MovementUtility _movementUtility;

@@ -10,7 +10,7 @@ namespace KillEmAll
         private readonly MovementUtility _movementUtility;
         private const float MAXIUM_DISTANCE = 2.5f;
         private const float MINIUM_DISTANCE = 1f;
-        private const float SHOOTING_DISTANCE = 5f;
+        private const float SHOOTING_DISTANCE = 20f;
         private const double ANGLE_LIMIT = Math.PI * 0.4;
 
         public SoldierMovement(MovementUtility movementUtility)
@@ -33,21 +33,16 @@ namespace KillEmAll
                 command.RotateLeft = targetDirection == Directions.Left;
             }
 
-            var distance = _movementUtility.DistanceBetween(currentSoldier.Position, targetPoint);
-
-
-            //SLOWER BUT MORE PRECISE MOVEMENT
-
+            // SLOWER BUT MORE PRECISE MOVEMENT
             command.MoveForward = true;
 
             if ((command.RotateRight || command.RotateLeft) && currentSoldier.Speed == 2)
                 command.MoveForward = false;
 
-
-            //FASTER MOVEMENT
-            //command.MoveForward = true;
-            //if (InGoodRange(distance) && angleDiff > ANGLE_LIMIT)
-            //    command.MoveForward = false;
+            // FASTER MOVEMENT
+            // command.MoveForward = true;
+            // if (InGoodRange(distance) && angleDiff > ANGLE_LIMIT)
+            //     command.MoveForward = false;
 
             return command;
         }

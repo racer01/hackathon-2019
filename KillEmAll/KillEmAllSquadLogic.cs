@@ -146,14 +146,23 @@ namespace KillEmAll
         // TODO: smart priorization, also include discovering
         private GameObject SelectTarget(Soldier soldier, GameState state)
         {
-            GameObject target = _targetFinder.GetClosestVisibleEnemy(soldier);
-            if (target != null)
-                return target;
+            var lowHealth = soldier.Health <= 40;
+            var lowAmmo = soldier.Ammo < 1;
+            GameObject target;
 
-            target = _targetFinder.GetClosestEnemyOfAll(soldier);
-            if (target != null)
-                return target;
 
+            if (!lowAmmo)
+            {
+                target = _targetFinder.GetClosestVisibleEnemy(soldier);
+                if (target != null)
+                    return target;
+
+                target = _targetFinder.GetClosestEnemyOfAll(soldier);
+                if (target != null)
+                    return target;
+            }
+
+            //TREASURE
             target = _targetFinder.GetClosestVisibleTreasure(soldier);
             if (target != null)
                 return target;
@@ -163,25 +172,28 @@ namespace KillEmAll
                 return target;
 
             //AMMO
-            target = _targetFinder.GetClosestVisibleAmmo(soldier);
-            if (target != null)
-                return target;
+            if (lowAmmo)
+            {
+                target = _targetFinder.GetClosestVisibleAmmo(soldier);
+                if (target != null)
+                    return target;
 
-            target = _targetFinder.GetClosestAmmo(soldier, state.VisibleAmmoBonuses);
-            if (target != null)
-                return target;
-            //
-
+                target = _targetFinder.GetClosestAmmo(soldier, state.VisibleAmmoBonuses);
+                if (target != null)
+                    return target;
+            }
 
             //HEALTH
-            target = _targetFinder.GetClosestVisibleHealth(soldier);
-            if (target != null)
-                return target;
+            if (lowHealth)
+            {
+                target = _targetFinder.GetClosestVisibleHealth(soldier);
+                if (target != null)
+                    return target;
 
-            target = _targetFinder.GetClosestHealth(soldier, state.VisibleHealthBonuses);
-            if (target != null)
-                return target;
-
+                //target = _targetFinder.GetClosestHealth(soldier, state.VisibleHealthBonuses);
+                //if (target != null)
+                //    return target;
+            }
 
             //DISCOVER
             var discoverTarget = _wallMapping.ReachableUnkownList.LastOrDefault();
@@ -280,13 +292,13 @@ namespace KillEmAll
             if (path == null || path.Route?.Count == 0)
                 return null;
 
-            //var furthestVisibleIndex = GetFurthestVisiblePointOnPath(soldier, path);
+            var furthestVisibleIndex = GetFurthestVisiblePointOnPath(soldier, path);
 
-            //if (!(furthestVisibleIndex < 0 || furthestVisibleIndex >= path.Route.Count))
-            //{
-            //    path.Route.RemoveRange(furthestVisibleIndex, path.Route.Count - 1 - furthestVisibleIndex);
-            //    _pathMapping.UpdatePath(soldier, path.Route);
-            //}
+            if (!(furthestVisibleIndex < 0 || furthestVisibleIndex >= path.Route.Count))
+            {
+                path.Route.RemoveRange(furthestVisibleIndex, path.Route.Count - 1 - furthestVisibleIndex);
+                _pathMapping.UpdatePath(soldier, path.Route);
+            }
 
             if (!IsSoldierInSameCellAsTarget(soldier.Position, path.Route.LastOrDefault()))
                 return path.Route.LastOrDefault();
