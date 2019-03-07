@@ -13,8 +13,8 @@ using WallMapping = KillEmAll.Helpers.WallMapping;
 namespace KillEmAll
 {
     [Export(typeof(ISquadLogic))]
-    [ExportMetadata("SquadName", "MLSlayer")]
-    [ExportMetadata("SquadImageResource", "KillEmAll.Resources.Face.png")]
+    [ExportMetadata("SquadName", "ThisIsFine")]
+    [ExportMetadata("SquadImageResource", "KillEmAll.Resources.ThisIsFine.png")]
     public class KillEmAllSquadLogic : ISquadLogic
     {
         private Random _randomGen;
@@ -53,7 +53,8 @@ namespace KillEmAll
             // update our kown map
             _wallMapping.StoreVisibleArea(state.VisibleArea);
 
-            var commands = state.MySquad.Select(soldier => {
+            var commands = state.MySquad.Select(soldier =>
+            {
                 var command = new SoldierCommand() { Soldier = soldier };
                 var target = SelectTarget(soldier, state);
 
@@ -224,7 +225,8 @@ namespace KillEmAll
         private PointF SelectNextTargetFromPath(Soldier soldier, List<PointF> path)
         {
             PointF nextCell = null;
-            if (path.Count > 1) {
+            if (path.Count > 1)
+            {
                 // TAKE THE LAST CELL FROM THE PATH, THATS THE NEXT TARGET
                 nextCell = path.ElementAt(path.Count - 1);
                 path.RemoveAt(path.Count - 1);
@@ -312,7 +314,7 @@ namespace KillEmAll
                     return i + 1;
             }
             return 1;
-            
+
         }
     }
 }
