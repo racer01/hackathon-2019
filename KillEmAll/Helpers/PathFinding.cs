@@ -163,23 +163,21 @@ namespace KillEmAll.Utility
         {
             for (var i = 0; i < path.Count; i++)
                 path[i] = new PointF(path[i].X + shift, path[i].Y + shift);
-
             return path;
         }
 
-        private int DistanceBetween(WeightedPoint origin, WeightedPoint neighbor)
+        private static int DistanceBetween(WeightedPoint origin, WeightedPoint neighbor)
         {
             if (neighbor.Y == origin.Y || neighbor.X == origin.X)
                 return STRAIGHT_G;
             return DIAGONAL_G;
         }
 
-        private List<PointF> ReconstructPath(Dictionary<WeightedPoint, WeightedPoint> cameFrom, WeightedPoint current)
+        private static List<PointF> ReconstructPath(Dictionary<WeightedPoint, WeightedPoint> cameFrom, WeightedPoint current)
         {
             var result = new List<PointF>() { new PointF(current.X, current.Y) };
 
-            WeightedPoint value;
-            while (cameFrom.TryGetValue(current, out value))
+            while (cameFrom.TryGetValue(current, out var value))
             {
                 result.Add(new PointF(value.X, value.Y));
                 current = value;
@@ -187,11 +185,10 @@ namespace KillEmAll.Utility
             return result;
         }
 
-        private int CalculateHeuristic(WeightedPoint point, int[] target)
+        private static int CalculateHeuristic(WeightedPoint point, int[] target)
         {
             var xDiff = Math.Abs(point.X - target[X]);
             var yDiff = Math.Abs(point.Y - target[Y]);
-
             return xDiff + yDiff;
         }
     }

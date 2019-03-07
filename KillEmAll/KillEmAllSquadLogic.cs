@@ -22,7 +22,7 @@ namespace KillEmAll
         private ITargetFinder _targetFinder;
         private IGameStateProvider _stateProvider;
         private IWallMapping _wallMapping;
-        private MovementUtility _movementUtility;
+        private IMovementUtility _movementUtility;
         private IPathFinding _pathFinding;
         private float _cellSize;
         private SoldierPathMapping _pathMapping;
@@ -45,8 +45,6 @@ namespace KillEmAll
         public IEnumerable<Hackathon.Public.SoldierCommand> Update(GameState state)
         {
             _stateProvider.Set(state);
-
-            // update our kown map
             _wallMapping.StoreVisibleArea(state.VisibleArea);
 
             var commands = state.MySquad.Select(soldier =>
@@ -143,7 +141,6 @@ namespace KillEmAll
             return lowerXLimit < soldierPos.X && upperXLimit > soldierPos.X && soldierPos.Y < upperYLimit && soldierPos.Y > lowerYLimit;
         }
 
-        // TODO: smart priorization, also include discovering
         private GameObject SelectTarget(Soldier soldier, GameState state)
         {
             var lowHealth = soldier.Health <= 40;
@@ -241,19 +238,6 @@ namespace KillEmAll
             return nextCell;
         }
 
-        private bool IsTargetReached(PointF soldierPos, PointF targetPos, int roundingPrecision)
-        {
-            //SOLDIER
-            var roundedX1 = Math.Round(soldierPos.X, roundingPrecision);
-            var roundedY1 = Math.Round(soldierPos.Y, roundingPrecision);
-
-            //TARGET
-            var roundedX2 = Math.Round(targetPos.X, roundingPrecision);
-            var roundedY2 = Math.Round(targetPos.Y, roundingPrecision);
-
-            return roundedX1 == roundedX2 && roundedY1 == roundedY2;
-        }
-
         private PointF GetNextStepTowardsTarget(Soldier soldier, GameObject target)
         {
             Path path = null;
@@ -316,7 +300,6 @@ namespace KillEmAll
                     return i + 1;
             }
             return 1;
-
         }
     }
 }

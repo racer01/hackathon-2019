@@ -1,10 +1,11 @@
 ﻿using System;
 using Hackathon.Public;
 using KillEmAll.Enums;
+using KillEmAll.Helpers.Interfaces;
 
 namespace KillEmAll.Utility
 {
-    public class MovementUtility
+    public class MovementUtility: IMovementUtility
     {
         public Directions GetDirection(double currentAngle, double targetAngle)
         {

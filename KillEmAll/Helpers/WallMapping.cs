@@ -48,15 +48,13 @@ namespace KillEmAll.Helpers
             ReachableUnkownList = new List<WeightedPoint>();
         }
 
-        public bool IsAlreadyDiscovered(int x, int y)
-        {
-            var value = _cells[x, y];
-            return value == MapCell.Wall || value == MapCell.Empty;
-        }
-
         public MapCell[,] GetMap()
         {
             return _cells;
+        }
+        public MapCell GetCellType(int x, int y)
+        {
+            return _cells[x, y];
         }
 
         public void Store(int x, int y, MapCell value)
@@ -66,49 +64,14 @@ namespace KillEmAll.Helpers
             _cells[x, y] = value;
         }
 
-        private void ClearBlockedWalls()
+        public bool IsAlreadyDiscovered(int x, int y)
         {
-            for (var i = 0; i < _blockingWalls.Length; i++)
-                _blockingWalls[i] = null;
+            var value = _cells[x, y];
+            return value == MapCell.Wall || value == MapCell.Empty;
         }
 
-        public PointF[] WallsOnLine(int x, int y)
-        {
-            if (x >= _cells.GetLength(0) || x < 0 || y >= _cells.GetLength(1) || y < 0)
-                return null;
-
-            ClearBlockedWalls();
-
-            var above = y + WALL_SIZE;
-            var below = y - WALL_SIZE;
-
-            var foundWalls = 0;
-            if (_cells[x, y] == MapCell.Wall)
-            {
-                _blockingWalls[0] = new PointF(x, y);
-                foundWalls++;
-            }
-            if (above < _cells.GetLength(1) && _cells[x, above] == MapCell.Wall)
-            {
-                _blockingWalls[1] = new PointF(x, above);
-                foundWalls++;
-            }
-            if (below >= 0 && _cells[x, below] == MapCell.Wall)
-            {
-                _blockingWalls[2] = new PointF(x, below);
-                foundWalls++;
-            }
-
-            if (foundWalls == 0)
-                return null;
-
-            return _blockingWalls;
-        }
-
-        /// <summary>
-        /// Stores the newly discovered areas in an array. If there are multiple walls (already discovered) next to each other, it skips them.
-        /// </summary>
-        /// <param name="visibleArea"></param>
+        // Stores the newly discovered areas in an array. 
+        // If there are multiple walls (already discovered) next to each other, it skips them.
         public void StoreVisibleArea(MapCell[,] visibleArea)
         {
             for (var i = 0; i < visibleArea.GetLength(0); i++)
@@ -169,12 +132,6 @@ namespace KillEmAll.Helpers
             return pos.X >= _cells.GetLength(0) || pos.X < 0 || pos.Y >= _cells.GetLength(1) || pos.Y < 0;
         }
 
-        public MapCell GetCellType(int x, int y)
-        {
-            return _cells[x, y];
-        }
-
-        // TODO: REFACTOR, TOO COMPLICATED
         public List<WeightedPoint> GetNeighbourCells(int[] origin, MapCell searchType = MapCell.Empty, MapCell[,] areaToSeach = null, DiagonalCheckType diagonalCheck = DiagonalCheckType.CheckIfReachable, bool includeUnknows = false)
         {
             var result = new List<WeightedPoint>(8);
@@ -305,20 +262,20 @@ namespace KillEmAll.Helpers
             return crossedWalls;
         }
 
-        private float GetSlope(PointF startingPoint, PointF endingPoint)
+        private static float GetSlope(PointF startingPoint, PointF endingPoint)
         {
             if (endingPoint.X - startingPoint.X != 0)
                 return (endingPoint.Y - startingPoint.Y) / (endingPoint.X - startingPoint.X);
             return float.MaxValue;
         }
 
-        private PointF GetPointOfLineForX(PointF knownPoint, float slope, float x)
+        private static PointF GetPointOfLineForX(PointF knownPoint, float slope, float x)
         {
             var y = (x - knownPoint.X) * slope + knownPoint.Y;
             return new PointF(x, y);
         }
 
-        private PointF GetPointOfLineForY(PointF knownPoint, float slope, float y)
+        private static PointF GetPointOfLineForY(PointF knownPoint, float slope, float y)
         {
             if (slope != 0)
                 return new PointF((y - knownPoint.Y) / slope + knownPoint.X, y);

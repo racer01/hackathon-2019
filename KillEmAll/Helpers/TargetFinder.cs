@@ -11,13 +11,13 @@ namespace KillEmAll.Helpers
         private const int MAXIMUM_TARGETS_ON_ENEMY = 3;
         private readonly IGameStateProvider _gameStateProvider;
         private readonly IWallMapping _wallMapping;
-        private readonly MovementUtility _movementUtility;
+        private readonly IMovementUtility _movementUtility;
         private readonly GameOptions _gameOptions;
 
         private Dictionary<string, GameObject> _soldierTargetMapping;
         private Dictionary<string, List<string>> _targetSoldierMapping;
 
-        public TargetFinder(IGameStateProvider gameStateProvider, IWallMapping wallMapping, MovementUtility movementUtility, GameOptions gameOptions)
+        public TargetFinder(IGameStateProvider gameStateProvider, IWallMapping wallMapping, IMovementUtility movementUtility, GameOptions gameOptions)
         {
             _gameStateProvider = gameStateProvider;
             _wallMapping = wallMapping;

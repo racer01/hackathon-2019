@@ -48,7 +48,8 @@
 //            // update our kown map
 //            _wallMapping.StoreVisibleArea(state.VisibleArea);
 
-//            var commands = state.MySquad.Select(soldier => {
+//            var commands = state.MySquad.Select(soldier =>
+//            {
 //                var command = new SoldierCommand() { Soldier = soldier };
 //                var target = SelectTarget(soldier, state);
 

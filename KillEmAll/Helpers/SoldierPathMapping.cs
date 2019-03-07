@@ -11,7 +11,6 @@ namespace KillEmAll.Helpers
     {
         public List<PointF> Route { get; set; }
         public Type TargetType { get; set; }
-
     }
 
     public class SoldierPathMapping
@@ -36,7 +35,6 @@ namespace KillEmAll.Helpers
         {
             if (!_pathMapping.ContainsKey(soldier.Id))
                 return new Path();
-
             return _pathMapping[soldier.Id];
         }
 

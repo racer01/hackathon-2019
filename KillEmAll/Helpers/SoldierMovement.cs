@@ -1,19 +1,20 @@
 ﻿using System;
 using Hackathon.Public;
 using KillEmAll.Enums;
-using KillEmAll.Utility;
+using KillEmAll.Helpers.Interfaces;
 
 namespace KillEmAll
 {
     public class SoldierMovement : ISoldierMovement
     {
-        private readonly MovementUtility _movementUtility;
+        private readonly IMovementUtility _movementUtility;
+        // EXPERIENCED CONSTANTS
         private const float MAXIUM_DISTANCE = 2.5f;
         private const float MINIUM_DISTANCE = 1f;
         private const float SHOOTING_DISTANCE = 20f;
         private const double ANGLE_LIMIT = Math.PI * 0.4;
 
-        public SoldierMovement(MovementUtility movementUtility)
+        public SoldierMovement(IMovementUtility movementUtility)
         {
             _movementUtility = movementUtility;
         }
@@ -38,11 +39,6 @@ namespace KillEmAll
 
             if ((command.RotateRight || command.RotateLeft) && currentSoldier.Speed == 2)
                 command.MoveForward = false;
-
-            // FASTER MOVEMENT
-            // command.MoveForward = true;
-            // if (InGoodRange(distance) && angleDiff > ANGLE_LIMIT)
-            //     command.MoveForward = false;
 
             return command;
         }
@@ -69,7 +65,7 @@ namespace KillEmAll
             return command;
         }
 
-
+        // usually used when the target is an enemy
         public SoldierCommand TargetEnemy(Soldier currentSoldier, GameObject enemy, ref SoldierCommand command)
         {
             var targetAngle = _movementUtility.GetTargetAngle(currentSoldier, enemy.Position);
@@ -112,7 +108,7 @@ namespace KillEmAll
                 command.MoveForward = true;
             }
 
-            // SHOOT?
+            // SHOOT
             if (distance <= SHOOTING_DISTANCE && 
                 angleDiff <= angleTolerance 
                 && currentSoldier.TimeTillCanShoot <= 0)
@@ -123,67 +119,19 @@ namespace KillEmAll
             return command;
         }
 
-        private bool InGoodRange(double distanceFromEnemy)
+        private static bool InGoodRange(double distanceFromEnemy)
         {
             return distanceFromEnemy < MAXIUM_DISTANCE && distanceFromEnemy > MINIUM_DISTANCE;
         }
 
-        private bool TooClose(double distanceFromEnemy)
+        private static bool TooClose(double distanceFromEnemy)
         {
             return distanceFromEnemy <= MINIUM_DISTANCE;
         }
 
-        private bool TooFar(double distanceFromEnemy)
+        private static bool TooFar(double distanceFromEnemy)
         {
             return distanceFromEnemy >= MAXIUM_DISTANCE;
-        }
-
-        //////////////////////// big words under this line ///////////////////////////////////
-        private Tuple<float, float> PredictNextPosition(Soldier soldier)
-        {
-            var direction = soldier.LookAtDirection;
-            var futureX = soldier.Position.X;
-            var futureY = soldier.Position.Y;
-
-            //Normalise radians to 0 - 2PI
-            if (direction < 0)
-                direction = (float)Math.PI * 2 - Math.Abs(direction);
-
-            float traveledX;
-            float traveledY;
-            if (direction <= Math.PI)
-            {
-                //SHOULD WORK UP TO PI
-                traveledX = (float)((Math.PI / 2 - direction) / (Math.PI / 2)) * soldier.Speed;
-                traveledY = soldier.Speed - Math.Abs(traveledX);
-
-                if (traveledX < 0)
-                    traveledY = -traveledY;
-            }
-            else
-            {
-                //PI->  2PI
-              traveledX = (float)((3 / 2 * Math.PI - direction) / (Math.PI / 2)) * soldier.Speed;
-
-                traveledY = soldier.Speed - Math.Abs(traveledX);
-
-                if (traveledX < 0)
-                    traveledY = -traveledY;
-            }
-
-            futureX += traveledX * 0.15f; //haaaaaaaaaaaaaaack
-            futureY += traveledY * 0.15f;
-
-            //DISABLE 
-            //return Tuple.Create(soldier.Position.X, soldier.Position.Y);
-            return Tuple.Create(futureX, futureY);
-        }
-
-        private double NormaliseRadian(double radian)
-        {
-            if (radian < 0)
-                return Math.PI * 2 - Math.Abs(radian);
-            return radian;
         }
     }
 }

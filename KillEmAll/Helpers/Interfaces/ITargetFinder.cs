@@ -35,6 +35,8 @@ namespace KillEmAll.Helpers.Interfaces
 
         HealthBonus GetClosestVisibleHealth(Soldier currentSoldier, float fov = 0);
 
+
+
         void ClearTargetMapping();
     }
 }

@@ -5,4 +5,5 @@
 	<s:Boolean x:Key="/Default/CodeStyle/Naming/CSharpAutoNaming/IsNamingAutoDetectionCompleted/@EntryValue">True</s:Boolean>
 	<s:String x:Key="/Default/Environment/AssemblyExplorer/XmlDocument/@EntryValue">&lt;AssemblyExplorer&gt;&#xD;
   &lt;Assembly Path="C:\Users\Laszlo_Szekely-Toth\.nuget\packages\hackathon.public\1.0.0\lib\net461\Hackathon.Public.dll" /&gt;&#xD;
+  &lt;Assembly Path="C:\Users\Gergely_Sandor_Szabo\.nuget\packages\hackathon.public\1.0.3\lib\net461\Hackathon.Public.dll" /&gt;&#xD;
 &lt;/AssemblyExplorer&gt;</s:String></wpf:ResourceDictionary>
